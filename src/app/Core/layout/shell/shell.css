@@ -1,0 +1,84 @@
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #f8fafc;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-shell.no-layout .main-content {
+  min-height: 100vh;
+}
+
+/* Floating Logo */
+.floating-logo {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 999;
+  width: 180px;
+  height: auto;
+  background: white;
+  padding: 1rem 1.5rem;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: 2px solid rgba(220, 38, 38, 0.1);
+  animation: floatLogoIn 0.6s ease-out;
+}
+
+.floating-logo:hover {
+  transform: translateY(-8px) scale(1.05);
+  box-shadow: 0 12px 32px rgba(220, 38, 38, 0.25);
+  border-color: rgba(220, 38, 38, 0.3);
+}
+
+.floating-logo img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+@keyframes floatLogoIn {
+  from {
+    opacity: 0;
+    transform: translateY(100px) scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .floating-logo {
+    bottom: 1rem;
+    right: 1rem;
+    width: 120px;
+    padding: 0.75rem 1rem;
+  }
+}
+
+/* Ensure smooth transitions */
+app-header,
+app-footer {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

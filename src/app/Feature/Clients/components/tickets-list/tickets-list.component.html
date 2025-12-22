@@ -1,0 +1,71 @@
+<div class="tickets-list-container">
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="tickets().length === 0">
+    <div class="empty-icon">
+      <mat-icon>inbox</mat-icon>
+    </div>
+    <h3>No Tickets Yet</h3>
+    <p>
+      You haven't created any support tickets. Click "Create Ticket" to submit your first request.
+    </p>
+  </div>
+
+  <!-- Tickets Grid -->
+  <div class="tickets-grid" *ngIf="tickets().length > 0">
+    <div class="ticket-card" *ngFor="let ticket of tickets()">
+      <!-- Card Header -->
+      <div class="card-header">
+        <div class="header-left">
+          <div class="ticket-id">#{{ ticket.id.slice(-8) }}</div>
+          <div class="ticket-date">
+            <mat-icon>schedule</mat-icon>
+            {{ formatDate(ticket.createdAt) }}
+          </div>
+        </div>
+        <button
+          mat-icon-button
+          class="delete-btn"
+          (click)="deleteTicket(ticket.id, $event)"
+          title="Delete ticket"
+        >
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+
+      <!-- Card Body -->
+      <div class="card-body">
+        <h3 class="ticket-subject">{{ ticket.subject }}</h3>
+        <p class="ticket-description">{{ ticket.description }}</p>
+      </div>
+
+      <!-- Card Footer -->
+      <div class="card-footer">
+        <div class="footer-left">
+          <!-- Status Badge -->
+          <div class="status-badge" [style.background-color]="getStatusColor(ticket.status)">
+            <mat-icon>{{ getStatusIcon(ticket.status) }}</mat-icon>
+            <span>{{ ticket.status }}</span>
+          </div>
+
+          <!-- Priority Badge -->
+          <div class="priority-badge" [style.color]="getPriorityColor(ticket.priority)">
+            <mat-icon>{{ getPriorityIcon(ticket.priority) }}</mat-icon>
+            <span>{{ ticket.priority }}</span>
+          </div>
+        </div>
+
+        <!-- Contact Info -->
+        <div class="contact-info">
+          <div class="info-item">
+            <mat-icon>email</mat-icon>
+            <span>{{ ticket.email }}</span>
+          </div>
+          <div class="info-item">
+            <mat-icon>phone</mat-icon>
+            <span>{{ ticket.phone }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

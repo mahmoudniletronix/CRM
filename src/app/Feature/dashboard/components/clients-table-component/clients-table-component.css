@@ -1,0 +1,22 @@
+.title {
+  margin: 0;
+  font-weight: 900;
+}
+.sub {
+  margin: 4px 0 12px;
+  opacity: 0.7;
+}
+
+.table-wrap {
+  overflow: auto;
+  border: 1px solid #e7eef6;
+  border-radius: 14px;
+}
+
+table {
+  width: 100%;
+}
+
+th {
+  font-weight: 900;
+}

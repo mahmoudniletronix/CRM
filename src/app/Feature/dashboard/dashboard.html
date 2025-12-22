@@ -1,0 +1,52 @@
+<div class="dashboard-container">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1 class="page-title">Dashboard</h1>
+      <p class="page-subtitle">Welcome back, {{ user()?.fullName }}</p>
+    </div>
+    <div class="header-actions">
+      <button mat-flat-button color="primary" [routerLink]="['/tickets']">
+        <mat-icon>confirmation_number</mat-icon>
+        Tickets
+      </button>
+      <button mat-flat-button color="warn" (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        Logout
+      </button>
+    </div>
+  </div>
+
+  <!-- KPI Cards -->
+  <div class="stats">
+    <div class="stat-card clients">
+      <div class="stat-icon">👥</div>
+      <div class="stat-label">Total Clients</div>
+      <div class="stat-value">{{ totals().clients }}</div>
+    </div>
+
+    <div class="stat-card pending">
+      <div class="stat-icon">⏳</div>
+      <div class="stat-label">Pending Tickets</div>
+      <div class="stat-value">{{ totals().pending }}</div>
+    </div>
+
+    <div class="stat-card assigned">
+      <div class="stat-icon">📋</div>
+      <div class="stat-label">Assigned Tickets</div>
+      <div class="stat-value">{{ totals().assigned }}</div>
+    </div>
+
+    <div class="stat-card closed">
+      <div class="stat-icon">✅</div>
+      <div class="stat-label">Closed Tickets</div>
+      <div class="stat-value">{{ totals().closed }}</div>
+    </div>
+  </div>
+
+  <!-- Main Content Grid -->
+  <section class="content-grid">
+    <app-client-create-component class="grid-card"></app-client-create-component>
+    <app-clients-table-component class="grid-card"></app-clients-table-component>
+  </section>
+</div>

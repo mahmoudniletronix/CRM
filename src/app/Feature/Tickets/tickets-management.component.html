@@ -1,0 +1,39 @@
+<header class="tickets__header">
+  <h2 class="tickets__title">Tickets Management</h2>
+
+  <button
+    mat-stroked-button
+    color="primary"
+    class="tickets__back"
+    routerLink="/dashboard"
+    type="button"
+  >
+    <mat-icon aria-hidden="true">arrow_back</mat-icon>
+    <span>Back to Dashboard</span>
+  </button>
+</header>
+
+<section class="tickets__layout" aria-label="Tickets layout">
+  <!-- Filters -->
+  <aside class="tickets__panel tickets__panel--filters" aria-label="Ticket filters">
+    <app-ticket-filters (filterChange)="updateFilters($event)"></app-ticket-filters>
+  </aside>
+
+  <!-- List -->
+  <aside class="tickets__panel tickets__panel--list" aria-label="Ticket list">
+    <app-ticket-list-sidebar
+      [tickets]="filteredTickets()"
+      [selectedId]="selectedTicketId()"
+      (select)="selectTicket($event)"
+    />
+  </aside>
+
+  <!-- Details -->
+  <main class="tickets__panel tickets__panel--details" aria-label="Ticket details">
+    <app-ticket-details
+      [ticket]="selectedTicket()"
+      (sendMessage)="onSendMessage($event)"
+      (resolve)="onResolveTicket($event)"
+    />
+  </main>
+</section>

@@ -1,0 +1,36 @@
+<div class="page">
+  <mat-card class="card">
+    <h2 class="login-title">Super Admin Login</h2>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="form">
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput type="email" formControlName="email" autocomplete="username" />
+        <mat-error *ngIf="form.controls.email.touched && form.controls.email.invalid">
+          Please enter a valid email
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Password</mat-label>
+        <input
+          matInput
+          type="password"
+          formControlName="password"
+          autocomplete="current-password"
+        />
+        <mat-error *ngIf="form.controls.password.touched && form.controls.password.invalid">
+          Password is required (min 6 chars)
+        </mat-error>
+      </mat-form-field>
+
+      <div class="error" *ngIf="error() as msg">{{ msg }}</div>
+
+      <button mat-flat-button type="submit" [disabled]="isLoading()">
+        {{ isLoading() ? 'Logging in...' : 'Login' }}
+      </button>
+
+      <div class="hint">Test email: <b>you@gmail.com</b></div>
+    </form>
+  </mat-card>
+</div>

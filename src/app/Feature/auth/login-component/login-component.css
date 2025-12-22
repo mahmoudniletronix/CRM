@@ -1,0 +1,40 @@
+.page {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: linear-gradient(135deg, #0f172a, #111827);
+}
+
+.card {
+  width: min(460px, 100%);
+  padding: 18px;
+  border-radius: 16px;
+}
+
+.login-title {
+  margin: 0 0 24px;
+  font-weight: 700;
+  font-size: 1.75rem;
+  text-align: center;
+  color: #111827;
+}
+
+.form {
+  display: grid;
+  gap: 12px;
+}
+
+.error {
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #fee2e2;
+  color: #991b1b;
+  font-weight: 700;
+}
+
+.hint {
+  margin-top: 8px;
+  font-size: 12px;
+  opacity: 0.75;
+}

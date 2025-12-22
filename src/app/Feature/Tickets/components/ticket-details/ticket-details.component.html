@@ -1,0 +1,82 @@
+<div class="details-container">
+  @if (!ticket()) {
+  <div class="empty-selection">
+    <mat-icon>chat_bubble_outline</mat-icon>
+    <h2>Select a ticket to view details</h2>
+  </div>
+  } @else {
+  <div class="header">
+    <div class="title-row">
+      <h1>{{ ticket()!.subject }}</h1>
+      <div class="actions">
+        @if (ticket()!.status !== 'Resolved' && ticket()!.status !== 'Closed') {
+        <button mat-stroked-button color="primary" (click)="resolve.emit(ticket()!.id)">
+          <mat-icon>check</mat-icon> Resolve
+        </button>
+        }
+      </div>
+    </div>
+
+    <div class="meta-row">
+      <span class="badge status" [class]="ticket()!.status.toLowerCase()">
+        {{ ticket()!.status }}
+      </span>
+      <span class="badge priority" [class]="ticket()!.priority.toLowerCase()">
+        {{ ticket()!.priority }} Priority
+      </span>
+      <span class="info"> From: {{ ticket()!.email }} | Phone: {{ ticket()!.phone }} </span>
+    </div>
+  </div>
+
+  <div class="conversation">
+    <!-- Original Description -->
+    <div class="message client">
+      <div class="message-header">
+        <span class="sender">Original Request</span>
+        <span class="time">{{ ticket()!.createdAt | date : 'short' }}</span>
+      </div>
+      <div class="message-content">
+        {{ ticket()!.description }}
+      </div>
+    </div>
+
+    <!-- Message History -->
+    @for (msg of ticket()!.messages; track msg.id) {
+    <div class="message" [class]="msg.sender">
+      <div class="message-header">
+        <span class="sender">
+          {{ msg.sender === 'client' ? 'Client' : msg.sender === 'system' ? 'System' : 'Agent' }}
+        </span>
+        <span class="time">{{ msg.createdAt | date : 'short' }}</span>
+      </div>
+      <div class="message-content">
+        {{ msg.content }}
+      </div>
+    </div>
+    }
+  </div>
+
+  <div class="reply-box">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Reply to customer...</mat-label>
+      <textarea
+        matInput
+        [(ngModel)]="replyText"
+        rows="3"
+        placeholder="Type your response here..."
+        [disabled]="ticket()!.status === 'Closed'"
+      ></textarea>
+    </mat-form-field>
+    <div class="reply-actions">
+      <button
+        mat-flat-button
+        color="primary"
+        [disabled]="!replyText() || ticket()!.status === 'Closed'"
+        (click)="sendReply()"
+      >
+        <mat-icon>send</mat-icon> Send Reply
+      </button>
+    </div>
+  </div>
+  }
+</div>

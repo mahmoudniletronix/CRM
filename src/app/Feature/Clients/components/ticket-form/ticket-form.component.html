@@ -1,0 +1,129 @@
+<div class="form-container">
+  <!-- Success Message -->
+  <div class="success-message" *ngIf="showSuccess">
+    <mat-icon>check_circle</mat-icon>
+    <span>Ticket created successfully!</span>
+  </div>
+
+  <!-- Form Card -->
+  <div class="form-card">
+    <div class="form-header">
+      <mat-icon class="header-icon">confirmation_number</mat-icon>
+      <div>
+        <h2>Create New Ticket</h2>
+        <p>Fill out the form below to submit your support request</p>
+      </div>
+    </div>
+
+    <form [formGroup]="ticketForm" (ngSubmit)="onSubmit()">
+      <!-- Contact Information Section -->
+      <div class="form-section">
+        <h3 class="section-title">
+          <mat-icon>contact_mail</mat-icon>
+          Contact Information
+        </h3>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Email Address</mat-label>
+            <input matInput type="email" formControlName="email" placeholder="your@email.com" />
+            <mat-icon matPrefix>email</mat-icon>
+            <mat-error *ngIf="ticketForm.get('email')?.invalid">
+              {{ getErrorMessage('email') }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Phone Number</mat-label>
+            <input matInput type="tel" formControlName="phone" placeholder="+20 123 456 7890" />
+            <mat-icon matPrefix>phone</mat-icon>
+            <mat-error *ngIf="ticketForm.get('phone')?.invalid">
+              {{ getErrorMessage('phone') }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- Ticket Details Section -->
+      <div class="form-section">
+        <h3 class="section-title">
+          <mat-icon>description</mat-icon>
+          Ticket Subject
+        </h3>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Subject</mat-label>
+            <input
+              matInput
+              formControlName="subject"
+              placeholder="Brief description of your issue"
+            />
+            <mat-icon matPrefix>title</mat-icon>
+            <mat-error *ngIf="ticketForm.get('subject')?.invalid">
+              {{ getErrorMessage('subject') }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Description</mat-label>
+            <textarea
+              matInput
+              formControlName="description"
+              rows="6"
+              placeholder="Provide detailed information about your issue..."
+            ></textarea>
+            <mat-icon matPrefix>notes</mat-icon>
+            <mat-error *ngIf="ticketForm.get('description')?.invalid">
+              {{ getErrorMessage('description') }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Severity</mat-label>
+            <mat-select formControlName="priority">
+              <mat-option *ngFor="let p of priorities" [value]="p.value">
+                <div class="priority-option">
+                  <mat-icon [style.color]="p.color">{{ p.icon }}</mat-icon>
+                  <span>{{ p.label }}</span>
+                </div>
+              </mat-option>
+            </mat-select>
+            <mat-icon matPrefix>flag</mat-icon>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- Form Actions -->
+      <div class="form-actions">
+        <button
+          mat-flat-button
+          color="primary"
+          type="submit"
+          [disabled]="isSubmitting"
+          class="submit-btn"
+        >
+          <mat-icon>send</mat-icon>
+          <span>{{ isSubmitting ? 'Creating Ticket...' : 'Create Ticket' }}</span>
+        </button>
+
+        <button
+          mat-stroked-button
+          type="button"
+          (click)="ticketForm.reset({ priority: 'Medium' })"
+          [disabled]="isSubmitting"
+          class="reset-btn"
+        >
+          <mat-icon>refresh</mat-icon>
+          Reset Form
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

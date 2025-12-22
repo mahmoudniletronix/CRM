@@ -1,0 +1,86 @@
+<h3 class="title">Create Client</h3>
+<p class="sub">Add a new client account for ticketing.</p>
+
+<form [formGroup]="form" (ngSubmit)="submit()" class="form">
+  <mat-form-field appearance="outline">
+    <mat-label>Account Name (English)</mat-label>
+    <input matInput formControlName="accountName" placeholder="Enter account name" />
+    <mat-error *ngIf="form.controls.accountName.touched && form.controls.accountName.invalid">
+      {{
+        form.controls.accountName.hasError('required')
+          ? 'Account name is required'
+          : 'Min 2 characters'
+      }}
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Account Name (Arabic)</mat-label>
+    <input
+      matInput
+      formControlName="accountNameAr"
+      placeholder="اسم الحساب"
+      style="text-align: right"
+    />
+    <mat-error *ngIf="form.controls.accountNameAr.touched && form.controls.accountNameAr.invalid">
+      {{
+        form.controls.accountNameAr.hasError('required')
+          ? 'Arabic name is required'
+          : 'Min 2 characters'
+      }}
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Site</mat-label>
+    <input matInput formControlName="siteName" placeholder="Enter site name" />
+    <mat-error *ngIf="form.controls.siteName.touched && form.controls.siteName.invalid">
+      {{ form.controls.siteName.hasError('required') ? 'Site is required' : 'Min 2 characters' }}
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Name</mat-label>
+    <input matInput formControlName="name" placeholder="Enter client name" />
+    <mat-error *ngIf="form.controls.name.touched && form.controls.name.invalid">
+      {{ form.controls.name.hasError('required') ? 'Name is required' : 'Min 3 characters' }}
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Email</mat-label>
+    <input matInput type="email" formControlName="email" placeholder="client@example.com" />
+    <mat-error *ngIf="form.controls.email.touched && form.controls.email.invalid">
+      {{ form.controls.email.hasError('required') ? 'Email is required' : 'Invalid email format' }}
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Phone Number</mat-label>
+    <input matInput formControlName="phoneNumber" placeholder="1234567890" />
+    <mat-error *ngIf="form.controls.phoneNumber.touched && form.controls.phoneNumber.invalid">
+      {{
+        form.controls.phoneNumber.hasError('required')
+          ? 'Phone is required'
+          : 'Must be 10-15 digits'
+      }}
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Password</mat-label>
+    <input matInput type="password" formControlName="password" placeholder="Min 6 characters" />
+    <mat-error *ngIf="form.controls.password.touched && form.controls.password.invalid">
+      {{
+        form.controls.password.hasError('required') ? 'Password is required' : 'Min 6 characters'
+      }}
+    </mat-error>
+  </mat-form-field>
+
+  <div class="msg msg--error" *ngIf="errorMsg() as msg">{{ msg }}</div>
+  <div class="msg msg--success" *ngIf="successMsg() as msg">{{ msg }}</div>
+
+  <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || submitting()">
+    {{ submitting() ? 'Creating...' : 'Create Client' }}
+  </button>
+</form>

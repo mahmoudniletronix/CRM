@@ -1,0 +1,14 @@
+<div class="app-shell" [class.no-layout]="hideLayout">
+  <app-header *ngIf="!hideLayout"></app-header>
+
+  <main class="main-content">
+    <router-outlet></router-outlet>
+  </main>
+
+  <app-footer *ngIf="!hideLayout"></app-footer>
+
+  <!-- Floating Logo -->
+  <a href="#" class="floating-logo" *ngIf="!hideLayout" title="NileTronix">
+    <img src="images/niletronix-logo.png" alt="NileTronix Logo" />
+  </a>
+</div>

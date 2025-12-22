@@ -1,0 +1,33 @@
+<header class="app-header">
+  <div class="header-container">
+    <div class="brand">
+      <div class="logo">NTX</div>
+      <div class="txt">
+        <h2>NileTronix CRM</h2>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <!-- Add navigation items as needed -->
+    </nav>
+
+    <div class="user-section" *ngIf="currentUser()">
+      <span class="user-name">{{ currentUser()?.fullName }}</span>
+      <button class="user-avatar" [matMenuTriggerFor]="userMenu">
+        {{ getUserInitials() }}
+      </button>
+
+      <mat-menu #userMenu="matMenu" class="user-menu">
+        <div class="user-info">
+          <div class="user-name-full">{{ currentUser()?.fullName }}</div>
+          <div class="user-email">{{ currentUser()?.email }}</div>
+        </div>
+        <mat-divider></mat-divider>
+        <button mat-menu-item (click)="logout()">
+          <mat-icon>logout</mat-icon>
+          <span>Logout</span>
+        </button>
+      </mat-menu>
+    </div>
+  </div>
+</header>

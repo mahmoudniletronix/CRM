@@ -1,0 +1,34 @@
+<div class="list-container">
+  @if (tickets().length === 0) {
+  <div class="empty-state">
+    <mat-icon>inbox</mat-icon>
+    <p>No tickets found</p>
+  </div>
+  } @else {
+  <div class="tickets-list">
+    @for (ticket of tickets(); track ticket.id) {
+    <div
+      class="ticket-item"
+      [class.active]="selectedId() === ticket.id"
+      (click)="select.emit(ticket.id)"
+    >
+      <div class="ticket-header">
+        <span class="ticket-status" [class]="ticket.status.toLowerCase()">
+          {{ ticket.status }}
+        </span>
+        <span class="ticket-date">{{ ticket.createdAt | date : 'MMM d' }}</span>
+      </div>
+
+      <h3 class="ticket-subject">{{ ticket.subject }}</h3>
+
+      <div class="ticket-meta">
+        <span class="priority" [class]="ticket.priority.toLowerCase()">
+          {{ ticket.priority }}
+        </span>
+        <span class="sender">{{ ticket.email }}</span>
+      </div>
+    </div>
+    }
+  </div>
+  }
+</div>

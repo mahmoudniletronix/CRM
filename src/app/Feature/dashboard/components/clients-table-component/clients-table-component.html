@@ -1,0 +1,47 @@
+<h3 class="title">Clients</h3>
+<p class="sub">Each client shows ticket status counters.</p>
+
+<div class="table-wrap">
+  <table mat-table [dataSource]="accounts()" class="mat-elevation-z0">
+    <!-- Name (English) Column -->
+    <ng-container matColumnDef="nameEn">
+      <th mat-header-cell *matHeaderCellDef>Account Name (EN)</th>
+      <td mat-cell *matCellDef="let account">{{ account.nameEn }}</td>
+    </ng-container>
+
+    <!-- Name (Arabic) Column -->
+    <ng-container matColumnDef="nameAr">
+      <th mat-header-cell *matHeaderCellDef>Account Name (AR)</th>
+      <td mat-cell *matCellDef="let account">{{ account.nameAr }}</td>
+    </ng-container>
+
+    <!-- Sites Column -->
+    <ng-container matColumnDef="sites">
+      <th mat-header-cell *matHeaderCellDef>Sites</th>
+      <td mat-cell *matCellDef="let account">
+        @if (account.sites?.length) {
+        <div class="sites-list">
+          @for (site of account.sites; track $index) {
+          <span class="site-badge">{{ site.nameEn }}</span>
+          }
+        </div>
+        } @else {
+        <span class="no-data">-</span>
+        }
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+
+  <mat-paginator
+    [length]="totalItems()"
+    [pageSize]="pageSize()"
+    [pageIndex]="pageIndex()"
+    [pageSizeOptions]="[5, 10, 20]"
+    (page)="onPageChange($event)"
+    showFirstLastButtons
+  >
+  </mat-paginator>
+</div>

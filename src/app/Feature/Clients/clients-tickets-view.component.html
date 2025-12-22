@@ -1,0 +1,42 @@
+<div class="tickets-container">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1 class="page-title">Support Tickets</h1>
+      <p class="page-subtitle">Create and manage your support requests</p>
+    </div>
+
+    <div class="header-stats">
+      <div class="stat-badge">
+        <span class="stat-label">Total Tickets</span>
+        <span class="stat-value">{{ tickets().length }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs Navigation -->
+  <div class="tabs-nav">
+    <button class="tab-btn" [class.active]="activeTab() === 'create'" (click)="switchTab('create')">
+      <mat-icon>add_circle</mat-icon>
+      Create Ticket
+    </button>
+    <button class="tab-btn" [class.active]="activeTab() === 'list'" (click)="switchTab('list')">
+      <mat-icon>list</mat-icon>
+      My Tickets
+      <span class="badge" *ngIf="tickets().length > 0">{{ tickets().length }}</span>
+    </button>
+  </div>
+
+  <!-- Tab Content -->
+  <div class="tab-content">
+    <!-- Create Ticket Tab -->
+    <div class="tab-panel" *ngIf="activeTab() === 'create'">
+      <app-ticket-form (ticketCreated)="onTicketCreated($event)"></app-ticket-form>
+    </div>
+
+    <!-- Tickets List Tab -->
+    <div class="tab-panel" *ngIf="activeTab() === 'list'">
+      <app-tickets-list [tickets]="tickets()"></app-tickets-list>
+    </div>
+  </div>
+</div>

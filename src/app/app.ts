@@ -1,11 +1,11 @@
 import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { ShellComponent } from './Core/layout/shell/shell';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [ShellComponent],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  styleUrl: './app.css',
 })
 export class App {
   protected readonly title = signal('CRM');
