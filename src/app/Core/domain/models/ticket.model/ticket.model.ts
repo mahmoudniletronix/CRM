@@ -28,7 +28,14 @@ export interface Ticket {
   email: string;
   phone: string;
   status: TicketStatus;
+  severity: number;
   priority: TicketPriority;
+  siteNameEn?: string;
+  siteNameAr?: string;
+  accountNameEn?: string;
+  accountNameAr?: string;
+  isInProducts?: boolean;
+  isInSupport?: boolean;
   messages: TicketMessage[];
   createdAt: Date;
   updatedAt?: Date;

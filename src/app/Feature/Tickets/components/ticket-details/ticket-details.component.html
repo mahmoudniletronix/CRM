@@ -39,6 +39,33 @@
 
       <span class="info"> From: {{ ticket()!.email }} | Phone: {{ ticket()!.phone }} </span>
     </div>
+
+    <!-- Context Row (Site & Account) -->
+    <div class="context-row">
+      @if (ticket()!.siteNameEn) {
+      <div class="context-item">
+        <mat-icon>business</mat-icon>
+        <span class="label">Site:</span>
+        <span class="value">{{ ticket()!.siteNameEn }}</span>
+      </div>
+      } @if (ticket()!.accountNameEn) {
+      <div class="context-item">
+        <mat-icon>person</mat-icon>
+        <span class="label">Account:</span>
+        <span class="value">{{ ticket()!.accountNameEn }}</span>
+      </div>
+      } @if (ticket()!.isInProducts) {
+      <div class="context-item highlight-product">
+        <mat-icon>inventory_2</mat-icon>
+        <span class="label">In Products</span>
+      </div>
+      } @if (ticket()!.isInSupport) {
+      <div class="context-item highlight-support">
+        <mat-icon>support_agent</mat-icon>
+        <span class="label">In Support</span>
+      </div>
+      }
+    </div>
   </div>
 
   <div class="conversation">

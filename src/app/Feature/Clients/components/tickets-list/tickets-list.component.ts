@@ -45,20 +45,13 @@ export class TicketsListComponent {
   }
 
   getPriorityColor(priority: TicketPriority): string {
-    // TicketPriority is a number now, but input might be expecting string?
-    // Wait, TicketPriority is enum number.
-    // Let's assume input 'tickets' has priority as number.
-    // The previous implementation used string keys "Low", "Medium" etc.
-    // We should either update the model to use numbers or handle mapping.
-    // Ticket interface says priority: TicketPriority (which is number).
-    // So priority here is likely number.
     const colors: Record<number, string> = {
       [TicketPriority.Low]: '#10b981',
       [TicketPriority.Medium]: '#f59e0b',
       [TicketPriority.High]: '#ef4444',
       [TicketPriority.Urgent]: '#dc2626',
     };
-    // Safe cast or handle if it's strictly typed
+
     return colors[priority] || '#6b7280';
   }
 

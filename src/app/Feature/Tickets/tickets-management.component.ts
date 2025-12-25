@@ -39,31 +39,40 @@ export class TicketsManagementComponent {
   readonly hasNextPage = this.ticketsService.hasNextPage;
   readonly hasPreviousPage = this.ticketsService.hasPreviousPage;
 
-  readonly currentFilters = signal<TicketFilter>({ status: 'All', priority: 'All' });
+  readonly currentFilters = signal<TicketFilter>({
+    status: 'All',
+    priority: 'All',
+    searchQuery: '',
+  });
 
   constructor() {
     this.loadTickets();
   }
 
   loadTickets() {
-    this.ticketsService.loadSuperAdminTickets(this.currentPage());
+    const { searchQuery, status, priority } = this.currentFilters();
+    this.ticketsService.loadSuperAdminTickets(
+      this.currentPage(),
+      10, // Default pageSize
+      searchQuery,
+      String(status),
+      String(priority)
+    );
   }
 
   onPageChange(page: number) {
-    this.ticketsService.loadSuperAdminTickets(page);
+    const { searchQuery, status, priority } = this.currentFilters();
+    this.ticketsService.loadSuperAdminTickets(
+      page,
+      10,
+      searchQuery,
+      String(status),
+      String(priority)
+    );
   }
 
-  // Computed filtered list
-  readonly filteredTickets = computed(() => {
-    const all = this.tickets();
-    const filters = this.currentFilters();
-
-    return all.filter((t) => {
-      const statusMatch = filters.status === 'All' || t.status === filters.status;
-      const priorityMatch = filters.priority === 'All' || t.priority === filters.priority;
-      return statusMatch && priorityMatch;
-    });
-  });
+  // Computed filtered list - Now just a passthrough since API handles filtering
+  readonly filteredTickets = computed(() => this.tickets());
 
   // Computed selected ticket
   readonly selectedTicket = computed(() => {
@@ -73,6 +82,14 @@ export class TicketsManagementComponent {
 
   updateFilters(filters: TicketFilter) {
     this.currentFilters.set(filters);
+    // Reload from page 1 when filters change
+    this.ticketsService.loadSuperAdminTickets(
+      1,
+      10,
+      filters.searchQuery,
+      String(filters.status),
+      String(filters.priority)
+    );
 
     // Deselect if currently selected ticket disappears from list
     const selected = this.selectedTicket();

@@ -27,89 +27,41 @@
   white-space: nowrap;
 }
 
-/* ===== Layout wrapper (fills viewport under header) =====
-   لو عندك Header ثابت فوق الصفحة، خلي parent container هو اللي بيحدد الارتفاع
-*/
+/* ===== Layout wrapper ===== */
+/* Keep the height calculation so the internal scroll works */
 .tickets__layout {
-  height: calc(100vh - 80px); /* لو عندك Top header ثابت - عدل الرقم حسب مشروعك */
-  padding: 0 16px 16px;
-
-  display: grid;
-  grid-template-columns: 280px 350px minmax(0, 1fr);
-  gap: 16px;
-
-  overflow: hidden; /* مهم عشان scroll يكون جوه الأعمدة */
+  height: calc(100vh - 80px);
+  padding-bottom: 16px;
 }
 
-/* كل Panel يبقى قابل للتمدد والـ scroll يكون داخله */
+/* Each Column's Panel */
 .tickets__panel {
-  min-height: 0;
   height: 100%;
-  overflow: auto;
+  overflow: hidden; /* Handle overflow inside this panel */
+  display: flex;
+  flex-direction: column;
 
   background: #fff;
   border: 1px solid #e7eef6;
   border-radius: 14px;
 }
 
-/* تحسين تجربة السكرول */
+/* Add scroll to specific internal containers if needed, 
+   but generally the component inside should handle it or we set overflow: auto here */
 .tickets__panel {
+  overflow-y: auto;
   scrollbar-gutter: stable;
 }
 
-/* ===== Breakpoints ===== */
-@media (max-width: 1200px) {
-  .tickets__layout {
-    grid-template-columns: 250px 320px minmax(0, 1fr);
-  }
-}
-
-/* Tablet: نخليها عمودين (Filters فوق list) + details */
 @media (max-width: 992px) {
+  /* On tablets/mobile, let it flow naturally */
   .tickets__layout {
-    height: auto; /* على التابلت/موبايل خليه طبيعي */
-    grid-template-columns: 320px minmax(0, 1fr);
-    grid-template-rows: auto;
-  }
-
-  .tickets__panel--filters {
-    grid-column: 1;
-    grid-row: 1;
-    max-height: 240px;
-  }
-
-  .tickets__panel--list {
-    grid-column: 1;
-    grid-row: 2;
-    max-height: calc(100vh - 80px - 16px - 240px - 16px);
-  }
-
-  .tickets__panel--details {
-    grid-column: 2;
-    grid-row: 1 / span 2;
-    max-height: calc(100vh - 80px - 16px);
-  }
-}
-
-/* Mobile: عمود واحد */
-@media (max-width: 768px) {
-  .tickets__header {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .tickets__back {
-    justify-content: center;
-  }
-
-  .tickets__layout {
-    grid-template-columns: 1fr;
     height: auto;
+    overflow-y: auto;
   }
 
-  .tickets__panel--filters,
-  .tickets__panel--list,
-  .tickets__panel--details {
-    max-height: none;
+  .tickets__panel {
+    height: 500px; /* Min height for visibility on mobile stack */
+    margin-bottom: 16px;
   }
 }

@@ -1,5 +1,5 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, tap, of } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
@@ -91,6 +91,7 @@ export class TicketsService {
             phone: safePayload.phoneNumber || '',
             status: TicketStatus.Pending,
             priority: this.mapSeverityToPriority(safePayload.severity),
+            severity: safePayload.severity,
             messages: [],
             createdAt: new Date(),
           };
@@ -122,41 +123,59 @@ export class TicketsService {
   readonly hasNextPage = signal(false);
   readonly hasPreviousPage = signal(false);
 
-  loadSuperAdminTickets(page: number = 1, pageSize: number = 10): void {
-    console.log(`Loading Super Admin Tickets (Page: ${page}, Size: ${pageSize})...`);
-    this.sitesService.getSuperAdminSites(page, pageSize).subscribe({
-      next: (response) => {
-        console.log('Sites Response received:', response);
+  loadSuperAdminTickets(
+    page: number = 1,
+    pageSize: number = 10,
+    search: string = '',
+    status: string = '',
+    severity: string = ''
+  ): void {
+    console.log(
+      `Loading Super Admin Tickets (Page: ${page}, Size: ${pageSize}, Search: "${search}", Status: ${status}, Severity: ${severity})...`
+    );
 
-        // Update pagination signals
-        this.currentPage.set(response.currentPage);
-        this.pageSize.set(response.pageSize);
-        this.totalItems.set(response.totalItems);
-        this.hasNextPage.set(response.hasNextPage);
-        this.hasPreviousPage.set(response.hasPreviousPage);
+    let params = new HttpParams().set('PageNumber', page).set('PageSize', pageSize);
 
-        const allTickets: Ticket[] = [];
-        response.data.forEach((site) => {
-          console.log(`Processing site: ${site.nameEn}, Tickets count: ${site.tickets?.length}`);
-          site.tickets.forEach((t) => {
-            allTickets.push({
-              id: t.id,
-              subject: t.subject,
-              description: t.description,
-              email: t.email,
-              phone: t.phoneNumber || '',
-              status: t.status as unknown as TicketStatus,
-              priority: this.mapSeverityToPriority(t.severity),
-              messages: [],
-              createdAt: new Date(),
-            });
-          });
-        });
-        console.log('Total flattened tickets:', allTickets.length);
-        this.ticketsSignal.set(allTickets);
-      },
-      error: (err) => console.error('Failed to load super admin tickets', err),
-    });
+    if (search) params = params.set('SearchText', search);
+    if (status && status !== 'All') params = params.set('Status', status);
+    if (severity && severity !== 'All') params = params.set('Severity', severity);
+
+    this.http
+      .get<any>(`${environment.apiUrl}/api/Ticket/GetAllForSuperAdmin`, { params })
+      .subscribe({
+        next: (response) => {
+          console.log('Tickets Response received:', response);
+
+          // Update pagination signals
+          this.currentPage.set(response.currentPage);
+          this.pageSize.set(response.pageSize);
+          this.totalItems.set(response.totalItems);
+          this.hasNextPage.set(response.hasNextPage);
+          this.hasPreviousPage.set(response.hasPreviousPage);
+
+          const mappedTickets: Ticket[] = response.data.map((t: any) => ({
+            id: t.id,
+            subject: t.subject,
+            description: t.description,
+            email: t.email,
+            phone: t.phoneNumber || '',
+            status: t.status as unknown as TicketStatus,
+            priority: this.mapSeverityToPriority(t.severity),
+            severity: t.severity,
+            siteNameEn: t.siteNameEn,
+            siteNameAr: t.siteNameAr,
+            accountNameEn: t.accountNameEn,
+            accountNameAr: t.accountNameAr,
+            isInProducts: t.isInProducts,
+            isInSupport: t.isInSupport,
+            messages: [],
+            createdAt: new Date(t.createdAt),
+          }));
+
+          this.ticketsSignal.set(mappedTickets);
+        },
+        error: (err) => console.error('Failed to load super admin tickets', err),
+      });
   }
 
   getTicketById(id: string): Ticket | undefined {

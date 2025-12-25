@@ -13,31 +13,39 @@
   </button>
 </header>
 
-<section class="tickets__layout" aria-label="Tickets layout">
-  <!-- Filters -->
-  <aside class="tickets__panel tickets__panel--filters" aria-label="Ticket filters">
-    <app-ticket-filters (filterChange)="updateFilters($event)"></app-ticket-filters>
-  </aside>
+<section class="tickets__layout container-fluid" aria-label="Tickets layout">
+  <div class="row h-100">
+    <!-- Filters (col-3) -->
+    <div class="col-md-3 h-100">
+      <aside class="tickets__panel tickets__panel--filters" aria-label="Ticket filters">
+        <app-ticket-filters (filterChange)="updateFilters($event)"></app-ticket-filters>
+      </aside>
+    </div>
 
-  <!-- List -->
-  <aside class="tickets__panel tickets__panel--list" aria-label="Ticket list">
-    <app-ticket-list-sidebar
-      [tickets]="filteredTickets()"
-      [selectedId]="selectedTicketId()"
-      [currentPage]="currentPage()"
-      [hasNextPage]="hasNextPage()"
-      [hasPreviousPage]="hasPreviousPage()"
-      (select)="selectTicket($event)"
-      (pageChange)="onPageChange($event)"
-    />
-  </aside>
+    <!-- List (col-3) -->
+    <div class="col-md-3 h-100">
+      <aside class="tickets__panel tickets__panel--list" aria-label="Ticket list">
+        <app-ticket-list-sidebar
+          [tickets]="filteredTickets()"
+          [selectedId]="selectedTicketId()"
+          [currentPage]="currentPage()"
+          [hasNextPage]="hasNextPage()"
+          [hasPreviousPage]="hasPreviousPage()"
+          (select)="selectTicket($event)"
+          (pageChange)="onPageChange($event)"
+        />
+      </aside>
+    </div>
 
-  <!-- Details -->
-  <main class="tickets__panel tickets__panel--details" aria-label="Ticket details">
-    <app-ticket-details
-      [ticket]="selectedTicket()"
-      (sendMessage)="onSendMessage($event)"
-      (resolve)="onResolveTicket($event)"
-    />
-  </main>
+    <!-- Details (col-6) -->
+    <div class="col-md-6 h-100">
+      <main class="tickets__panel tickets__panel--details" aria-label="Ticket details">
+        <app-ticket-details
+          [ticket]="selectedTicket()"
+          (sendMessage)="onSendMessage($event)"
+          (resolve)="onResolveTicket($event)"
+        />
+      </main>
+    </div>
+  </div>
 </section>

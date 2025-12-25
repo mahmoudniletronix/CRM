@@ -1,21 +1,83 @@
-<div class="filters-container">
-  <mat-form-field appearance="outline" class="filter-field">
-    <mat-label>Status</mat-label>
-    <mat-select [(ngModel)]="filters.status" (selectionChange)="onFilterChange()">
-      <mat-option value="All">All Statuses</mat-option>
-      @for (status of statuses; track status) {
-      <mat-option [value]="status">{{ status }}</mat-option>
-      }
-    </mat-select>
-  </mat-form-field>
+<div class="filters-card container-fluid p-3">
+  <!-- Header -->
+  <div class="row align-items-center mb-3 pb-2 border-bottom">
+    <div class="col d-flex align-items-center gap-2">
+      <div class="icon-box">
+        <mat-icon aria-hidden="true" class="text-primary">tune</mat-icon>
+      </div>
+      <div>
+        <h6 class="m-0 fw-bold">Filters</h6>
+        <small class="text-muted">Narrow down tickets quickly</small>
+      </div>
+    </div>
+    <div class="col-auto">
+      <button
+        mat-stroked-button
+        type="button"
+        (click)="resetFilters()"
+        [disabled]="isDefaultFilters()"
+      >
+        <mat-icon>restart_alt</mat-icon>
+        Reset
+      </button>
+    </div>
+  </div>
 
-  <mat-form-field appearance="outline" class="filter-field">
-    <mat-label>Priority</mat-label>
-    <mat-select [(ngModel)]="filters.priority" (selectionChange)="onFilterChange()">
-      <mat-option value="All">All Priorities</mat-option>
-      @for (priority of priorities; track priority) {
-      <mat-option [value]="priority">{{ priority }}</mat-option>
-      }
-    </mat-select>
-  </mat-form-field>
+  <!-- Filters Body -->
+  <div class="row g-2">
+    <!-- Search (Full Width) -->
+    <div class="col-12">
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Search</mat-label>
+        <mat-icon matPrefix>search</mat-icon>
+        <input
+          matInput
+          placeholder="Subject, email, ticket id..."
+          [ngModel]="filters.searchQuery"
+          (ngModelChange)="onSearchInput($event)"
+        />
+        @if (filters.searchQuery.length) {
+        <button
+          mat-icon-button
+          matSuffix
+          type="button"
+          aria-label="Clear search"
+          (click)="clearSearch()"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+        }
+      </mat-form-field>
+    </div>
+
+    <!-- Status (Half Width) -->
+    <div class="col-md-6">
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Status</mat-label>
+        <mat-icon matPrefix>flag</mat-icon>
+        <mat-select [(ngModel)]="filters.status" (selectionChange)="onFilterChange()">
+          <mat-option value="All">All Statuses</mat-option>
+          @for (opt of statuses; track opt.value) {
+          <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <!-- Priority (Half Width) -->
+    <div class="col-md-6">
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Priority</mat-label>
+        <mat-icon matPrefix>priority_high</mat-icon>
+        <mat-select [(ngModel)]="filters.priority" (selectionChange)="onFilterChange()">
+          <mat-option value="All">All Priorities</mat-option>
+          @for (opt of priorities; track opt.value) {
+          <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <!-- Footer Hint -->
 </div>

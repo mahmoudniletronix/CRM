@@ -21,6 +21,15 @@
 
       <h3 class="ticket-subject">{{ ticket.subject }}</h3>
 
+      <!-- New details: Site and Account -->
+      <div class="ticket-sub-details">
+        @if (ticket.siteNameEn) {
+        <span class="detail-item"> <mat-icon>business</mat-icon> {{ ticket.siteNameEn }} </span>
+        } @if (ticket.accountNameEn) {
+        <span class="detail-item"> <mat-icon>person</mat-icon> {{ ticket.accountNameEn }} </span>
+        }
+      </div>
+
       <div class="ticket-meta">
         <span class="priority" [class]="getPriorityClass(ticket.priority)">
           {{ getPriorityLabel(ticket.priority) }}
