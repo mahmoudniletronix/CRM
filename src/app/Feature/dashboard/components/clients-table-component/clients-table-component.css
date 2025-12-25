@@ -1,22 +1,230 @@
-.title {
-  margin: 0;
-  font-weight: 900;
+/* =========================
+   Clients Table - Premium Style
+========================= */
+
+:host {
+  display: block;
+  font-family: 'Inter', system-ui, sans-serif;
+  --primary: #3b82f6;
+  --text-dark: #0f172a;
+  --text-muted: #64748b;
+  --bg-soft: #f8fafc;
+  --border-light: #e2e8f0;
 }
+
+.title {
+  margin: 0 0 8px;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-dark);
+  letter-spacing: -0.02em;
+}
+
 .sub {
-  margin: 4px 0 12px;
-  opacity: 0.7;
+  margin: 0 0 24px;
+  color: var(--text-muted);
+  font-size: 0.95rem;
 }
 
 .table-wrap {
-  overflow: auto;
-  border: 1px solid #e7eef6;
-  border-radius: 14px;
+  overflow: hidden;
+  border-radius: 20px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+  background: #fff;
+  border: 1px solid var(--border-light);
 }
 
 table {
   width: 100%;
+  border-collapse: collapse;
 }
 
-th {
-  font-weight: 900;
+/* Header */
+th.mat-mdc-header-cell {
+  background: #f1f5f9;
+  color: var(--text-dark);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  padding: 16px 24px;
+  border-bottom: 2px solid var(--border-light);
+}
+
+/* Cells */
+td.mat-mdc-cell {
+  padding: 16px 24px;
+  vertical-align: middle;
+  color: var(--text-dark);
+  border-bottom: 1px solid var(--border-light);
+  font-size: 0.95rem;
+}
+
+/* Expansion Column */
+.mat-column-expand {
+  width: 48px;
+  padding-right: 0 !important;
+}
+
+tr.mat-mdc-row:last-child td {
+  border-bottom: none;
+}
+
+/* Row states */
+.element-row {
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.element-row:hover {
+  background-color: #fafbfc;
+}
+
+.expanded-row {
+  background-color: #f8fafc;
+}
+
+.expanded-row td {
+  border-bottom-color: transparent !important;
+}
+
+/* Detail Row */
+.detail-row {
+  height: 0;
+}
+
+.detail-row td {
+  padding: 0 !important;
+  border-bottom-width: 0 !important;
+}
+
+.element-detail {
+  overflow: hidden;
+  display: flex;
+}
+
+.expandable-content {
+  padding: 8px 24px 24px 72px; /* Indent to align with name columns */
+  width: 100%;
+}
+
+.no-sites-message {
+  padding: 16px 24px 24px 72px;
+}
+
+/* Name Columns */
+.mat-column-nameEn,
+.mat-column-nameAr {
+  font-weight: 600;
+  width: 35%;
+}
+
+/* Sites Container */
+.sites-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+/* Site Item Card */
+.site-item {
+  background: #fff;
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  padding: 16px;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.site-item:hover {
+  border-color: #bad6fb;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.08);
+  transform: translateY(-1px);
+}
+
+.site-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--bg-soft);
+  transition: background 0.2s;
+}
+
+.site-item:hover::before {
+  background: var(--primary);
+}
+
+/* Site Header */
+.site-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  border-bottom: 1px dashed var(--border-light);
+  padding-bottom: 10px;
+}
+
+.site-icon {
+  color: var(--text-muted);
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+.site-name {
+  font-weight: 700;
+  color: var(--text-dark);
+  font-size: 0.95rem;
+}
+
+/* Products List */
+.products-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Product Chip */
+.product-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #eff6ff;
+  border: 1px solid #dbeafe;
+  border-radius: 999px;
+  padding: 4px 10px 4px 12px;
+  font-size: 0.8rem;
+  color: #1e40af;
+  transition: background 0.2s;
+}
+
+.product-chip:hover {
+  background: #dbeafe;
+}
+
+.prod-name {
+  font-weight: 600;
+}
+
+.prod-date {
+  font-size: 0.7rem;
+  background: #fff;
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: var(--text-muted);
+  margin-left: 4px;
+}
+
+.no-data {
+  color: var(--text-muted);
+  font-style: italic;
+  font-size: 0.9rem;
+  background: var(--bg-soft);
+  padding: 4px 12px;
+  border-radius: 6px;
 }

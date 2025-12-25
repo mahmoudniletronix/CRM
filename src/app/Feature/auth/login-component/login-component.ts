@@ -49,13 +49,18 @@ export class LoginComponent {
     this.authService.login({ email: email!, password: password! }).subscribe({
       next: () => {
         this.isLoading.set(false);
-        this.router.navigate(['/dashboard']);
+        const user = this.authService.currentUser();
+
+        if (user?.role === 'AccountAdmin') {
+          this.router.navigate(['/clients/tickets']);
+        } else {
+          this.router.navigate(['/dashboard']);
+        }
       },
       error: (err: any) => {
         this.isLoading.set(false);
         console.error('Login error:', err);
 
-        // Extract error message
         let errorMessage = 'Login failed. Please try again.';
 
         if (err.status === 401) {

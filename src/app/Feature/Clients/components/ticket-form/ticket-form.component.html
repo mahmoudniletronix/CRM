@@ -16,6 +16,28 @@
     </div>
 
     <form [formGroup]="ticketForm" (ngSubmit)="onSubmit()">
+      <div class="form-section">
+        <h3 class="section-title">
+          <mat-icon>inventory_2</mat-icon>
+          Product Details
+        </h3>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Select Product</mat-label>
+            <mat-select formControlName="productId">
+              <mat-option *ngFor="let prod of products()" [value]="prod.id">
+                {{ prod.nameEn }}
+              </mat-option>
+            </mat-select>
+            <mat-icon matPrefix>apps</mat-icon>
+            <mat-error *ngIf="ticketForm.get('productId')?.invalid">
+              This field is required
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+
       <!-- Contact Information Section -->
       <div class="form-section">
         <h3 class="section-title">
@@ -84,6 +106,68 @@
           </mat-form-field>
         </div>
 
+        <!-- Attachments Section -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <mat-icon>attach_file</mat-icon>
+            Attachments (Optional)
+          </h3>
+
+          <div class="form-row">
+            <div class="file-upload-container">
+              <input
+                type="file"
+                #fileInput
+                (change)="onFileSelected($event)"
+                accept="image/*,.pdf,.doc,.docx"
+                multiple
+                hidden
+              />
+
+              <button
+                mat-stroked-button
+                type="button"
+                (click)="fileInput.click()"
+                class="upload-btn"
+              >
+                <mat-icon>cloud_upload</mat-icon>
+                Choose Files
+              </button>
+
+              <p class="upload-hint">Supported: Images, PDF, Word documents (Max 5MB per file)</p>
+            </div>
+          </div>
+
+          <!-- Selected Files Preview -->
+          <div class="selected-files" *ngIf="selectedFiles().length > 0">
+            <h4 class="files-title">
+              <mat-icon>attachment</mat-icon>
+              Selected Files ({{ selectedFiles().length }})
+            </h4>
+
+            <div class="files-list">
+              <div class="file-item" *ngFor="let file of selectedFiles(); let i = index">
+                <div class="file-info">
+                  <mat-icon class="file-icon">insert_drive_file</mat-icon>
+                  <div class="file-details">
+                    <span class="file-name">{{ file.name }}</span>
+                    <span class="file-size">{{ getFileSize(file.size) }}</span>
+                  </div>
+                </div>
+                <button
+                  mat-icon-button
+                  type="button"
+                  (click)="removeFile(i)"
+                  class="remove-btn"
+                  [attr.aria-label]="'Remove ' + file.name"
+                >
+                  <mat-icon>close</mat-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="form-row">
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Severity</mat-label>
@@ -106,18 +190,18 @@
           mat-flat-button
           color="primary"
           type="submit"
-          [disabled]="isSubmitting"
+          [disabled]="isSubmitting()"
           class="submit-btn"
         >
           <mat-icon>send</mat-icon>
-          <span>{{ isSubmitting ? 'Creating Ticket...' : 'Create Ticket' }}</span>
+          <span>{{ isSubmitting() ? 'Creating Ticket...' : 'Create Ticket' }}</span>
         </button>
 
         <button
           mat-stroked-button
           type="button"
           (click)="ticketForm.reset({ priority: 'Medium' })"
-          [disabled]="isSubmitting"
+          [disabled]="isSubmitting()"
           class="reset-btn"
         >
           <mat-icon>refresh</mat-icon>

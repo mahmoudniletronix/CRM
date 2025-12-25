@@ -1,13 +1,25 @@
 import { Routes } from '@angular/router';
 import { AuthGuard } from './Core/domain/guards/auth.guard';
+import { RoleGuard } from './Core/domain/guards/role.guard';
+
 export const routes: Routes = [
   {
     path: 'tickets',
+    canActivate: [RoleGuard],
+    data: { roles: ['SuperAdmin'] },
     loadComponent: () =>
       import('./Feature/Tickets/tickets-management.component').then(
         (m) => m.TicketsManagementComponent
       ),
-    canActivate: [AuthGuard],
+  },
+  {
+    path: 'clients',
+    canActivate: [RoleGuard],
+    data: { roles: ['SuperAdmin'] },
+    loadComponent: () =>
+      import('./Feature/Client-Management/client-management.component').then(
+        (m) => m.ClientManagementComponent
+      ),
   },
   {
     path: '',
@@ -21,11 +33,14 @@ export const routes: Routes = [
   },
   {
     path: 'dashboard',
-    canActivate: [AuthGuard],
+    canActivate: [RoleGuard],
+    data: { roles: ['SuperAdmin'] },
     loadComponent: () => import('./Feature/dashboard/dashboard').then((m) => m.Dashboard),
   },
   {
     path: 'clients/tickets',
+    canActivate: [RoleGuard],
+    data: { roles: ['AccountAdmin', 'SuperAdmin'] },
     loadComponent: () =>
       import('./Feature/Clients/clients-tickets-view.component').then(
         (m) => m.ClientsTicketsViewComponent

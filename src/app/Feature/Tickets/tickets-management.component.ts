@@ -74,11 +74,15 @@ export class TicketsManagementComponent {
   onSendMessage(content: string) {
     const id = this.selectedTicketId();
     if (id) {
-      this.ticketsService.addMessage(id, content, 'agent');
+      this.ticketsService.addMessage(id, content, 'agent').subscribe({
+        error: (err) => console.error('Failed to send message', err),
+      });
     }
   }
 
   onResolveTicket(id: string) {
-    this.ticketsService.resolveTicket(id);
+    this.ticketsService.resolveTicket(id).subscribe({
+      error: (err) => console.error('Failed to resolve ticket', err),
+    });
   }
 }

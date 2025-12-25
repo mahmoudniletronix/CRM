@@ -1,7 +1,7 @@
 import { Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
-import { Ticket } from '../../../../Core/domain/models/ticket.model';
+import { Ticket } from '../../../../Core/domain/models/ticket.model/ticket.model';
 
 @Component({
   selector: 'app-ticket-list-sidebar',

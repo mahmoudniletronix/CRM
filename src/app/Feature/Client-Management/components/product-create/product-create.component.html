@@ -1,0 +1,90 @@
+<div class="product-block">
+  <div class="block-header">
+    <h2>
+      <mat-icon>inventory_2</mat-icon>
+      Company Products / Projects
+    </h2>
+  </div>
+
+  <!-- Create Form -->
+  <div class="product-form" *ngIf="showForm()">
+    <h3>Add New Product</h3>
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Product Name (English)</mat-label>
+          <input matInput formControlName="nameEn" placeholder="e.g. ERP System" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Product Name (Arabic)</mat-label>
+          <input matInput formControlName="nameAr" placeholder="مثال: نظام تخطيط الموارد" />
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Description (English)</mat-label>
+          <textarea matInput formControlName="descEn" rows="2"></textarea>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Description (Arabic)</mat-label>
+          <textarea matInput formControlName="descAr" rows="2"></textarea>
+        </mat-form-field>
+      </div>
+      <div class="form-row">
+        <div class="file-upload-container">
+          <input
+            type="file"
+            #fileInput
+            (change)="onFileSelected($event)"
+            accept="image/*"
+            style="display: none"
+          />
+          <button type="button" mat-stroked-button (click)="fileInput.click()">
+            <mat-icon>cloud_upload</mat-icon> Upload Product Image
+          </button>
+          <span class="file-name" *ngIf="selectedFile">{{ selectedFile.name }}</span>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" mat-button (click)="toggleForm()">Cancel</button>
+        <button type="submit" mat-flat-button color="primary" [disabled]="submitting()">
+          {{ submitting() ? 'Creating...' : 'Create Product' }}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Products Grid -->
+  <div class="products-grid">
+    <!-- Add New Card -->
+    <div class="product-card add-product-card" (click)="toggleForm()" *ngIf="!showForm()">
+      <mat-icon class="add-icon">add_circle_outline</mat-icon>
+      <span>Add New Product</span>
+    </div>
+
+    <!-- Existing Products -->
+    <div
+      class="product-card"
+      *ngFor="let product of products()"
+      (click)="openProductDetails(product)"
+    >
+      <div class="card-media">
+        <img
+          *ngIf="product.imageUrl"
+          [src]="product.imageUrl"
+          [alt]="product.nameEn"
+          class="product-img"
+        />
+        <div *ngIf="!product.imageUrl" class="placeholder-icon">
+          <mat-icon>inventory_2</mat-icon>
+        </div>
+      </div>
+      <div class="card-content">
+        <h3 class="card-title">{{ product.nameEn }}</h3>
+        <p class="card-desc">{{ product.descEn || 'No description provided' }}</p>
+      </div>
+    </div>
+  </div>
+</div>

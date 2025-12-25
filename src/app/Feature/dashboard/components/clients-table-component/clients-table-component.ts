@@ -1,16 +1,26 @@
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal, afterNextRender } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatIconModule } from '@angular/material/icon';
 import { ClientsService } from '../../../../Services/clients/clients';
 import { AccountDto } from '../../../../Core/domain/models/accountDTO/account-api.models';
 
 @Component({
   selector: 'app-clients-table-component',
-  imports: [CommonModule, MatTableModule, MatButtonModule, MatPaginatorModule],
+  standalone: true,
+  imports: [CommonModule, MatTableModule, MatButtonModule, MatPaginatorModule, MatIconModule],
   templateUrl: './clients-table-component.html',
   styleUrl: './clients-table-component.css',
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed,void', style({ height: '0px', minHeight: '0' })),
+      state('expanded', style({ height: '*' })),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ]),
+  ],
 })
 export class ClientsTableComponent {
   private readonly clientsService = inject(ClientsService);
@@ -20,7 +30,8 @@ export class ClientsTableComponent {
   readonly pageSize = signal(10);
   readonly pageIndex = signal(0);
 
-  readonly displayedColumns: string[] = ['nameEn', 'nameAr', 'sites'];
+  readonly expandedElement = signal<AccountDto | null>(null);
+  readonly displayedColumns: string[] = ['expand', 'nameEn', 'nameAr'];
 
   constructor() {
     afterNextRender(() => {

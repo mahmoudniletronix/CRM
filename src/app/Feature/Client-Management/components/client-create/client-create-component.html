@@ -1,0 +1,131 @@
+<div class="client-block">
+  <div class="block-header">
+    <h2>
+      <mat-icon>person_add</mat-icon>
+      Create New Client
+    </h2>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" class="client-form">
+    <!-- Basic Info -->
+    <div class="section-title">Basic Information</div>
+    <div class="form-row">
+      <mat-form-field appearance="outline">
+        <mat-label>Client Name (English)</mat-label>
+        <input matInput formControlName="nameEn" placeholder="Client Name En" />
+        <mat-error *ngIf="form.get('nameEn')?.hasError('required')">Required</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Client Name (Arabic)</mat-label>
+        <input matInput formControlName="nameAr" placeholder="اسم العميل" />
+        <mat-error *ngIf="form.get('nameAr')?.hasError('required')">Required</mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" type="email" placeholder="client@example.com" />
+        <mat-error *ngIf="form.get('email')?.hasError('email')">Invalid email</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Password</mat-label>
+        <input matInput formControlName="password" type="password" />
+        <mat-error *ngIf="form.get('password')?.hasError('minlength')">Min 6 chars</mat-error>
+      </mat-form-field>
+    </div>
+
+    <!-- Sites -->
+    <div formArrayName="sites">
+      <div *ngFor="let site of sites.controls; let i = index" [formGroupName]="i" class="site-card">
+        <div class="card-header">
+          <h3>Site #{{ i + 1 }}</h3>
+          <button
+            type="button"
+            mat-icon-button
+            color="warn"
+            (click)="removeSite(i)"
+            *ngIf="sites.length > 1"
+            title="Remove Site"
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Site Name (English)</mat-label>
+            <input matInput formControlName="nameEn" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Site Name (Arabic)</mat-label>
+            <input matInput formControlName="nameAr" />
+          </mat-form-field>
+        </div>
+
+        <!-- Products per Site -->
+        <div class="products-section">
+          <h4>Products / Services</h4>
+          <div formArrayName="products">
+            <div
+              *ngFor="let product of getProductsArray(i).controls; let j = index"
+              [formGroupName]="j"
+              class="product-row"
+            >
+              <mat-form-field appearance="outline" class="product-select">
+                <mat-label>Product</mat-label>
+                <mat-select formControlName="productId">
+                  <mat-option *ngFor="let p of availableProducts()" [value]="p.id">
+                    {{ p.nameEn }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="date-field">
+                <mat-label>Support End Date</mat-label>
+                <input matInput [matDatepicker]="picker" formControlName="supportEndDate" />
+                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+              </mat-form-field>
+
+              <button
+                type="button"
+                mat-icon-button
+                class="remove-btn"
+                (click)="removeProductFromSite(i, j)"
+              >
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+          </div>
+          <button
+            type="button"
+            mat-stroked-button
+            class="add-product-btn"
+            (click)="addProductToSite(i)"
+          >
+            <mat-icon>add</mat-icon> Add Product
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="actions-row">
+      <button type="button" mat-stroked-button (click)="addSite()">
+        <mat-icon>add_business</mat-icon> Add Another Site
+      </button>
+    </div>
+
+    <!-- Messages -->
+    <div class="alert success" *ngIf="successMsg()">{{ successMsg() }}</div>
+    <div class="alert error" *ngIf="errorMsg()">{{ errorMsg() }}</div>
+
+    <div class="submit-row">
+      <button mat-flat-button color="primary" type="submit" [disabled]="submitting()">
+        {{ submitting() ? 'Creating Client...' : 'Create Client' }}
+      </button>
+    </div>
+  </form>
+</div>

@@ -5,13 +5,14 @@ import { Auth } from '../../../Services/auth/auth';
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(Auth);
   const token = authService.getToken();
+  const role = authService.getRole();
 
   if (req.url.includes('/api/Auth/Login')) {
     return next(req);
   }
 
   if (token) {
-    console.log('Attaching Token to request:', req.url);
+    console.log(`[AuthInterceptor] Attaching Token. User Role: ${role}. Request: ${req.url}`);
 
     req = req.clone({
       setHeaders: {
@@ -19,7 +20,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       },
     });
   } else {
-    console.warn('No token found for request:', req.url);
+    console.warn('[AuthInterceptor] No token found for request:', req.url);
   }
 
   return next(req);

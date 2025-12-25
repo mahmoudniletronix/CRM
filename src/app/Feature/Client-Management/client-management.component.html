@@ -1,0 +1,37 @@
+<div class="page-container">
+  <header class="header">
+    <div class="header-content">
+      <h1>Client Management</h1>
+      <p>Manage company products, client accounts, and subscriptions.</p>
+    </div>
+
+    <!-- Back to Dashboard -->
+    <div class="header-actions">
+      <button
+        mat-stroked-button
+        class="back-button btn btn-outline-primary justify-content-center align-items-center d-flex w-100 rounded-5"
+        routerLink="/dashboard"
+      >
+        <mat-icon>arrow_back</mat-icon>
+        Back to Dashboard
+      </button>
+    </div>
+  </header>
+
+  <section class="content-grid">
+    <!-- Block 1: Products -->
+    <div class="block-section">
+      <app-product-create></app-product-create>
+    </div>
+
+    <!-- Block 2: Create Client -->
+    <div class="block-section">
+      <app-client-create-component></app-client-create-component>
+    </div>
+
+    <!-- Block 3: Clients Table -->
+    <div class="block-section table-section">
+      <app-clients-table-component></app-clients-table-component>
+    </div>
+  </section>
+</div>

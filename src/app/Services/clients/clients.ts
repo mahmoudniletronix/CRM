@@ -7,8 +7,8 @@ import {
   PagedResponse,
   AccountDto,
 } from '../../Core/domain/models/accountDTO/account-api.models';
-import { ApiResponse } from '../../Core/domain/models/api-response.models';
-import { Client } from '../../Core/domain/models/client.models';
+import { ApiResponse } from '../../Core/domain/models/api-response/api-response.models';
+import { Client } from '../../Core/domain/models/client.models/client.models';
 
 @Injectable({ providedIn: 'root' })
 export class ClientsService {
@@ -34,8 +34,8 @@ export class ClientsService {
   getAccounts(page: number, pageSize: number) {
     return this.http.get<PagedResponse<AccountDto>>(`${environment.apiUrl}/api/Account/GetAll`, {
       params: {
-        currentPage: page,
-        pageSize: pageSize,
+        PageNumber: page,
+        PageSize: pageSize,
       },
     });
   }

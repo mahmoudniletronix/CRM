@@ -1,4 +1,4 @@
-import { Component, output } from '@angular/core';
+import { Component, inject, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -6,7 +6,12 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
-import { CreateTicketDto, TicketPriority } from '../../../../Core/domain/models/ticket.model';
+import { TicketPriority } from '../../../../Core/domain/models/ticket.model/ticket.model';
+import { TicketsService } from '../../../../Services/tickets/tickets.service';
+import { ProductsService } from '../../../../Services/products/products.service';
+import { Auth } from '../../../../Services/auth/auth';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-ticket-form',
@@ -24,70 +29,137 @@ import { CreateTicketDto, TicketPriority } from '../../../../Core/domain/models/
   styleUrls: ['./ticket-form.component.css'],
 })
 export class TicketFormComponent {
-  ticketCreated = output<CreateTicketDto>();
+  ticketCreated = output<any>();
+
+  private fb = inject(FormBuilder);
+  private ticketsService = inject(TicketsService);
+  private productsService = inject(ProductsService);
+  private auth = inject(Auth);
+  private http = inject(HttpClient);
 
   ticketForm: FormGroup;
-  isSubmitting = false;
+  readonly isSubmitting = this.ticketsService.isSubmitting;
   showSuccess = false;
 
+  products = signal<any[]>([]);
+  sites = signal<any[]>([]);
+  selectedFiles = signal<File[]>([]);
+
   priorities = [
-    { value: TicketPriority.Low, label: 'Low', icon: 'arrow_downward', color: '#10b981' },
-    { value: TicketPriority.Medium, label: 'Medium', icon: 'remove', color: '#f59e0b' },
-    { value: TicketPriority.High, label: 'High', icon: 'arrow_upward', color: '#ef4444' },
-    { value: TicketPriority.Urgent, label: 'Urgent', icon: 'priority_high', color: '#dc2626' },
+    { value: 0, label: 'Low', icon: 'arrow_downward', color: '#10b981' },
+    { value: 1, label: 'Medium', icon: 'remove', color: '#f59e0b' },
+    { value: 2, label: 'High', icon: 'arrow_upward', color: '#ef4444' },
+    { value: 3, label: 'Critical', icon: 'priority_high', color: '#dc2626' },
   ];
 
-  constructor(private fb: FormBuilder) {
+  constructor() {
     this.ticketForm = this.fb.group({
       subject: ['', [Validators.required, Validators.minLength(5)]],
       description: ['', [Validators.required, Validators.minLength(10)]],
       email: ['', [Validators.required, Validators.email]],
-      phone: ['', [Validators.required, Validators.pattern(/^[\d\s\+\-\(\)]+$/)]],
-      priority: [TicketPriority.Medium],
+      phone: ['', [Validators.pattern(/^[\d\s\+\-\(\)]+$/)]],
+      priority: [1, [Validators.required]], // Default Medium
+      productId: ['', [Validators.required]],
+      siteId: ['', [Validators.required]],
+    });
+
+    this.loadProducts();
+    this.loadSites();
+  }
+
+  loadProducts() {
+    this.productsService.getProductsDropdown().subscribe({
+      next: (data) => this.products.set(data),
+      error: (err) => console.error('Failed to load products', err),
+    });
+  }
+
+  loadSites() {
+    this.http.get<any[]>(`${environment.apiUrl}/GetSites`).subscribe({
+      next: (sites) => {
+        this.sites.set(sites);
+        // Auto-select first site for AccountAdmin
+        if (sites.length > 0) {
+          this.ticketForm.patchValue({ siteId: sites[0].id });
+        }
+      },
+      error: (err) => console.error('Failed to load sites', err),
     });
   }
 
   onSubmit(): void {
-    if (this.ticketForm.valid && !this.isSubmitting) {
-      this.isSubmitting = true;
+    if (this.ticketForm.valid && !this.isSubmitting()) {
+      const formVal = this.ticketForm.value;
 
-      const dto: CreateTicketDto = this.ticketForm.value;
+      const payload: any = {
+        subject: formVal.subject,
+        description: formVal.description,
+        email: formVal.email,
+        phoneNumber: formVal.phone,
+        severity: formVal.priority,
+        productId: formVal.productId,
+        siteId: formVal.siteId,
+        attachments: this.selectedFiles(),
+      };
 
-      // Simulate API call delay
-      setTimeout(() => {
-        this.ticketCreated.emit(dto);
-        this.showSuccess = true;
-        this.ticketForm.reset({ priority: TicketPriority.Medium });
-        this.isSubmitting = false;
-
-        // Hide success message after 3 seconds
-        setTimeout(() => {
-          this.showSuccess = false;
-        }, 3000);
-      }, 500);
-    } else {
-      // Mark all fields as touched to show validation errors
-      Object.keys(this.ticketForm.controls).forEach((key) => {
-        this.ticketForm.get(key)?.markAsTouched();
+      this.ticketsService.createTicket(payload).subscribe({
+        next: (res) => {
+          this.ticketCreated.emit(res);
+          this.showSuccess = true;
+          this.selectedFiles.set([]); // Clear selected files
+          this.ticketForm.reset({
+            priority: 1,
+            siteId: this.sites()[0]?.id || '',
+          });
+          setTimeout(() => (this.showSuccess = false), 3000);
+        },
+        error: (err) => {
+          console.error('Create ticket failed', err);
+        },
       });
+    } else {
+      this.ticketForm.markAllAsTouched();
     }
+  }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const filesArray = Array.from(input.files);
+
+      // Validate file size (max 5MB per file)
+      const maxSize = 5 * 1024 * 1024; // 5MB
+      const validFiles = filesArray.filter((file) => {
+        if (file.size > maxSize) {
+          console.warn(`File ${file.name} exceeds 5MB limit`);
+          return false;
+        }
+        return true;
+      });
+
+      this.selectedFiles.update((existing) => [...existing, ...validFiles]);
+      // Reset input to allow selecting the same file again
+      input.value = '';
+    }
+  }
+
+  removeFile(index: number): void {
+    this.selectedFiles.update((files) => files.filter((_, i) => i !== index));
+  }
+
+  getFileSize(bytes: number): string {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
   }
 
   getErrorMessage(fieldName: string): string {
     const field = this.ticketForm.get(fieldName);
-    if (field?.hasError('required')) {
-      return 'This field is required';
-    }
-    if (field?.hasError('email')) {
-      return 'Please enter a valid email';
-    }
-    if (field?.hasError('minlength')) {
-      const minLength = field.errors?.['minlength'].requiredLength;
-      return `Minimum ${minLength} characters required`;
-    }
-    if (field?.hasError('pattern')) {
-      return 'Please enter a valid phone number';
-    }
+    if (field?.hasError('required')) return 'This field is required';
+    if (field?.hasError('email')) return 'Please enter a valid email';
+    if (field?.hasError('minlength'))
+      return `Minimum ${field.errors?.['minlength'].requiredLength} characters required`;
+    if (field?.hasError('pattern')) return 'Please enter a valid phone number';
     return '';
   }
 }

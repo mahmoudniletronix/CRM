@@ -4,7 +4,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { Ticket, TicketStatus } from '../../../../Core/domain/models/ticket.model';
+import { Ticket, TicketStatus } from '../../../../Core/domain/models/ticket.model/ticket.model';
 import { TicketsService } from '../../../../Services/tickets/tickets.service';
 
 @Component({
@@ -83,7 +83,9 @@ export class TicketsListComponent {
   deleteTicket(id: string, event: Event): void {
     event.stopPropagation();
     if (confirm('Are you sure you want to delete this ticket?')) {
-      this.ticketsService.deleteTicket(id);
+      this.ticketsService.deleteTicket(id).subscribe({
+        error: (err) => console.error('Failed to delete ticket', err),
+      });
     }
   }
 }

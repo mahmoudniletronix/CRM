@@ -1,0 +1,36 @@
+<div class="dialog-container">
+  <div class="dialog-header">
+    <div class="header-image-container" *ngIf="data.imageUrl">
+      <img [src]="data.imageUrl" [alt]="data.nameEn" class="header-image" />
+      <div class="overlay"></div>
+    </div>
+    <div class="header-icon-container" *ngIf="!data.imageUrl">
+      <mat-icon>inventory_2</mat-icon>
+    </div>
+    <button mat-icon-button class="close-btn" (click)="close()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div class="dialog-content">
+    <div class="title-section">
+      <h2 class="main-title">{{ data.nameEn }}</h2>
+      <h3 class="sub-title" *ngIf="data.nameAr">{{ data.nameAr }}</h3>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-item full-width" *ngIf="data.descEn">
+        <label>Description (EN)</label>
+        <p>{{ data.descEn }}</p>
+      </div>
+      <div class="info-item full-width" *ngIf="data.descAr">
+        <label>الوصف (AR)</label>
+        <p class="rtl-text">{{ data.descAr }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="dialog-actions">
+    <button mat-stroked-button color="warn" (click)="close()">Close</button>
+  </div>
+</div>

@@ -10,6 +10,11 @@
         <mat-icon>confirmation_number</mat-icon>
         Tickets
       </button>
+      <button mat-flat-button color="primary" [routerLink]="['/clients']">
+        <mat-icon>people</mat-icon>
+        Client Management
+      </button>
+
       <button mat-flat-button color="warn" (click)="logout()">
         <mat-icon>logout</mat-icon>
         Logout
@@ -43,10 +48,6 @@
       <div class="stat-value">{{ totals().closed }}</div>
     </div>
   </div>
-
-  <!-- Main Content Grid -->
-  <section class="content-grid">
-    <app-client-create-component class="grid-card"></app-client-create-component>
-    <app-clients-table-component class="grid-card"></app-clients-table-component>
-  </section>
+  <!-- clients table -->
+  <app-clients-table-component></app-clients-table-component>
 </div>

@@ -7,6 +7,11 @@
     </div>
 
     <div class="header-stats">
+      <!-- lougout button -->
+      <button mat-button (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        Logout
+      </button>
       <div class="stat-badge">
         <span class="stat-label">Total Tickets</span>
         <span class="stat-value">{{ tickets().length }}</span>

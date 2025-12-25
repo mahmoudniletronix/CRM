@@ -1,21 +1,40 @@
+export interface ProductSupportDto {
+  productId: string;
+  supportEndDate: string; // ISO Date
+}
+
 export interface AccountSiteDto {
   nameEn: string;
   nameAr: string;
+  products: ProductSupportDto[];
 }
 
 export interface AddAccountRequestDto {
   email: string;
   password: string;
+  sites: AccountSiteDto[];
   nameEn: string;
   nameAr: string;
-  sites: AccountSiteDto[];
+}
+
+export interface AccountProductResponseDto {
+  id: string;
+  nameEn: string;
+  supportDateEnd: string;
+}
+
+export interface AccountSiteResponseDto {
+  id: string;
+  nameEn: string;
+  nameAr: string;
+  products: AccountProductResponseDto[];
 }
 
 export interface AccountDto {
   id: string;
   nameEn: string;
   nameAr: string;
-  sites: any[];
+  sites: AccountSiteResponseDto[];
 }
 
 export interface PagedResponse<T> {

@@ -1,0 +1,51 @@
+.page-container {
+  padding: 32px;
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background-color: #f1f5f9;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.header h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 8px 0;
+}
+
+.header p {
+  color: #64748b;
+  margin: 0;
+  font-size: 1rem;
+}
+
+.content-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.block-section {
+  width: 100%;
+}
+
+/* Ensure components inside blocks take full width if needed */
+app-product-create,
+app-client-create-component,
+app-clients-table-component {
+  display: block;
+}
+
+.table-section {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}

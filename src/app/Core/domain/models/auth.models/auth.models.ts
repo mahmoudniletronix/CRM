@@ -7,6 +7,7 @@ export interface AuthUser {
   role: string;
   token: string;
   permissions?: string[];
+  siteId?: string;
 }
 
 export interface LoginRequest {
@@ -18,4 +19,5 @@ export interface LoginResponse {
   token: string;
   roleName: string;
   permissions: string[];
+  siteId?: string;
 }

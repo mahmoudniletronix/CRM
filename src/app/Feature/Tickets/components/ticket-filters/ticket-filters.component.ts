@@ -3,7 +3,10 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
-import { TicketPriority, TicketStatus } from '../../../../Core/domain/models/ticket.model';
+import {
+  TicketPriority,
+  TicketStatus,
+} from '../../../../Core/domain/models/ticket.model/ticket.model';
 
 export interface TicketFilter {
   status: TicketStatus | 'All';

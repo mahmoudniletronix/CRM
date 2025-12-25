@@ -1,0 +1,290 @@
+/* =========================
+   Client Create - Catchy + Simple
+   Works great with Angular Material
+========================= */
+
+:host {
+  --primary: var(--primary-color, #3b82f6);
+  --text: var(--text-primary, #0f172a);
+  --muted: #64748b;
+
+  --card: var(--surface-card, #ffffff);
+  --soft: #f8fafc;
+  --line: #e6eef7;
+
+  display: block;
+}
+
+.client-block {
+  background: var(--card);
+  border-radius: 18px;
+  padding: 24px;
+  margin-bottom: 24px;
+
+  border: 1px solid var(--line);
+  box-shadow: 0 10px 25px rgba(2, 6, 23, 0.06), 0 2px 8px rgba(2, 6, 23, 0.04);
+
+  font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+/* Header */
+.block-header {
+  margin-bottom: 18px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.block-header h2 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: var(--text);
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.block-header h2 mat-icon {
+  color: var(--primary);
+  background: rgba(59, 130, 246, 0.12);
+  border: 1px solid rgba(59, 130, 246, 0.18);
+  border-radius: 12px;
+  padding: 6px;
+  display: contents;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Section title */
+.section-title {
+  margin: 18px 0 14px;
+  font-size: 0.95rem;
+  font-weight: 900;
+  color: #1f2937;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-title::before {
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-radius: 4px;
+  background: var(--primary);
+  box-shadow: 0 10px 20px rgba(59, 130, 246, 0.25);
+}
+
+/* Form rows */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 10px;
+}
+
+@media (max-width: 900px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Sites card */
+.site-card {
+  margin-top: 14px;
+  background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 16px;
+
+  box-shadow: 0 6px 18px rgba(2, 6, 23, 0.04);
+}
+
+/* Site header */
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  margin-bottom: 12px;
+}
+
+.card-header h3 {
+  margin: 0;
+  font-size: 0.98rem;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+/* =========================
+   Products / Services Section
+========================= */
+
+.products-section {
+  margin-top: 14px;
+  padding: 16px;
+  border-radius: 16px;
+
+  background: radial-gradient(800px 200px at 20% 0%, rgba(59, 130, 246, 0.1), transparent 60%),
+    #ffffff;
+
+  border: 1px solid var(--line);
+}
+
+.products-section h4 {
+  margin: 0 0 12px;
+  font-size: 0.95rem;
+  font-weight: 900;
+  color: #0f172a;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.products-section h4::before {
+  content: '';
+  width: 6px;
+  height: 18px;
+  border-radius: 6px;
+  background: var(--primary);
+  box-shadow: 0 10px 18px rgba(59, 130, 246, 0.22);
+}
+
+/* Product rows container */
+.products-section [formArrayName='products'] {
+  display: grid;
+  gap: 12px;
+}
+
+/* Product row: Grid (clean alignment) */
+.product-row {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr auto;
+  gap: 12px;
+  align-items: start;
+
+  padding: 12px;
+  border-radius: 14px;
+
+  background: var(--soft);
+  border: 1px solid transparent;
+
+  transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.product-row:hover {
+  background: #ffffff;
+  border-color: #dbe7f3;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 18px rgba(2, 6, 23, 0.04);
+}
+
+/* fields sizing */
+.product-select,
+.date-field {
+  min-width: 0;
+}
+
+/* Remove icon button */
+.remove-btn {
+  width: 40px;
+  height: 40px;
+  margin-top: 4px;
+
+  border-radius: 12px;
+  background: #fff1f2;
+  color: #e11d48;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: transform 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+
+.remove-btn:hover {
+  background: #ffe4e6;
+  color: #be123c;
+  transform: scale(1.06);
+}
+
+/* Add product button */
+.add-product-btn {
+  margin-top: 12px;
+  width: 100%;
+  height: 46px;
+  border-radius: 14px;
+
+  border: 1px dashed #cbd5e1;
+  background: #ffffff;
+  color: #475569;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.add-product-btn:hover {
+  border-color: var(--primary);
+  background: rgba(59, 130, 246, 0.06);
+  color: var(--primary);
+  transform: translateY(-1px);
+}
+
+/* Responsive product row */
+@media (max-width: 900px) {
+  .product-row {
+    grid-template-columns: 1fr;
+  }
+
+  .remove-btn {
+    justify-self: end;
+    margin-top: 0;
+  }
+}
+
+/* Actions */
+.actions-row {
+  margin: 16px 0 0;
+}
+
+.submit-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 18px;
+}
+
+/* Alerts */
+.alert {
+  padding: 12px 14px;
+  border-radius: 12px;
+  margin: 14px 0;
+  font-size: 0.92rem;
+  font-weight: 700;
+  border: 1px solid transparent;
+}
+
+.alert.success {
+  background: #ecfdf5;
+  color: #065f46;
+  border-color: #a7f3d0;
+}
+
+.alert.error {
+  background: #fff1f2;
+  color: #9f1239;
+  border-color: #fecdd3;
+}
+
+/* Material fields full width */
+mat-form-field {
+  width: 100%;
+}

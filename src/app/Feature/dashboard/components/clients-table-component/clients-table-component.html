@@ -2,7 +2,26 @@
 <p class="sub">Each client shows ticket status counters.</p>
 
 <div class="table-wrap">
-  <table mat-table [dataSource]="accounts()" class="mat-elevation-z0">
+  <table mat-table [dataSource]="accounts()" multiTemplateDataRows class="mat-elevation-z0">
+    <!-- Expand Column -->
+    <ng-container matColumnDef="expand">
+      <th mat-header-cell *matHeaderCellDef aria-label="row actions">&nbsp;</th>
+      <td mat-cell *matCellDef="let element">
+        <button
+          mat-icon-button
+          aria-label="expand row"
+          (click)="
+            expandedElement.set(expandedElement() === element ? null : element);
+            $event.stopPropagation()
+          "
+        >
+          <mat-icon>{{
+            expandedElement() === element ? 'keyboard_arrow_up' : 'keyboard_arrow_down'
+          }}</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
     <!-- Name (English) Column -->
     <ng-container matColumnDef="nameEn">
       <th mat-header-cell *matHeaderCellDef>Account Name (EN)</th>
@@ -15,24 +34,55 @@
       <td mat-cell *matCellDef="let account">{{ account.nameAr }}</td>
     </ng-container>
 
-    <!-- Sites Column -->
-    <ng-container matColumnDef="sites">
-      <th mat-header-cell *matHeaderCellDef>Sites</th>
-      <td mat-cell *matCellDef="let account">
-        @if (account.sites?.length) {
-        <div class="sites-list">
-          @for (site of account.sites; track $index) {
-          <span class="site-badge">{{ site.nameEn }}</span>
+    <!-- Expanded Content Column - The detail row is made up of this one column that spans all columns -->
+    <ng-container matColumnDef="expandedDetail">
+      <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
+        <div
+          class="element-detail"
+          [@detailExpand]="element === expandedElement() ? 'expanded' : 'collapsed'"
+        >
+          @if (element.sites?.length) {
+          <div class="sites-container expandable-content">
+            @for (site of element.sites; track $index) {
+            <div class="site-item">
+              <div class="site-header">
+                <mat-icon class="site-icon">business</mat-icon>
+                <span class="site-name">{{ site.nameEn }}</span>
+              </div>
+
+              @if (site.products?.length) {
+              <div class="products-list">
+                @for (prod of site.products; track $index) {
+                <div class="product-chip">
+                  <span class="prod-name">{{ prod.nameEn }}</span>
+                  <span class="prod-date" *ngIf="prod.supportDateEnd">
+                    Exp: {{ prod.supportDateEnd | date : 'mediumDate' }}
+                  </span>
+                </div>
+                }
+              </div>
+              }
+            </div>
+            }
+          </div>
+          } @else {
+          <div class="no-sites-message expandable-content">
+            <span class="no-data">No sites assigned to this account.</span>
+          </div>
           }
         </div>
-        } @else {
-        <span class="no-data">-</span>
-        }
       </td>
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    <tr
+      mat-row
+      *matRowDef="let element; columns: displayedColumns"
+      class="element-row"
+      [class.expanded-row]="expandedElement() === element"
+      (click)="expandedElement.set(expandedElement() === element ? null : element)"
+    ></tr>
+    <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-row"></tr>
   </table>
 
   <mat-paginator

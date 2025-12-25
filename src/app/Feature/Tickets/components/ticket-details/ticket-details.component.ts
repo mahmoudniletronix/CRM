@@ -5,7 +5,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { Ticket, TicketPriority, TicketStatus } from '../../../../Core/domain/models/ticket.model';
+import {
+  Ticket,
+  TicketPriority,
+  TicketStatus,
+} from '../../../../Core/domain/models/ticket.model/ticket.model';
 
 @Component({
   selector: 'app-ticket-details',

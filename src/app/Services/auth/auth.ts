@@ -2,7 +2,11 @@ import { Injectable, computed, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap, catchError, throwError } from 'rxjs';
-import { AuthUser, LoginRequest, LoginResponse } from '../../Core/domain/models/auth.models';
+import {
+  AuthUser,
+  LoginRequest,
+  LoginResponse,
+} from '../../Core/domain/models/auth.models/auth.models';
 import { environment } from '../../../environments/environment';
 
 @Injectable({
@@ -15,11 +19,16 @@ export class Auth {
   private readonly _user = signal<AuthUser | null>(this.readUserFromStorage());
   readonly currentUser = this._user.asReadonly();
 
+  getRole(): string | undefined {
+    return this._user()?.role;
+  }
+
   readonly isAuthenticated = computed(() => !!this._user());
   readonly token = computed(() => this._user()?.token ?? null);
+  readonly siteId = computed(() => this._user()?.siteId ?? null);
 
   /**
-   * Login with API
+   * Login
    */
   login(payload: LoginRequest): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${environment.apiUrl}/api/Auth/Login`, payload).pipe(
@@ -34,6 +43,7 @@ export class Auth {
           role: response.roleName,
           token: response.token,
           permissions: response.permissions,
+          siteId: response.siteId || userInfo.siteId || null,
         };
 
         this._user.set(user);
