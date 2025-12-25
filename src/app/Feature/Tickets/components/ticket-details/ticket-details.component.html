@@ -9,7 +9,8 @@
     <div class="title-row">
       <h1>{{ ticket()!.subject }}</h1>
       <div class="actions">
-        @if (ticket()!.status !== 'Resolved' && ticket()!.status !== 'Closed') {
+        @if (ticket()!.status !== TicketStatus.Closed && ticket()!.status !== TicketStatus.Rejected)
+        {
         <button mat-stroked-button color="primary" (click)="resolve.emit(ticket()!.id)">
           <mat-icon>check</mat-icon> Resolve
         </button>
@@ -18,12 +19,24 @@
     </div>
 
     <div class="meta-row">
-      <span class="badge status" [class]="ticket()!.status.toLowerCase()">
-        {{ ticket()!.status }}
-      </span>
-      <span class="badge priority" [class]="ticket()!.priority.toLowerCase()">
-        {{ ticket()!.priority }} Priority
-      </span>
+      <mat-form-field appearance="outline" class="status-select">
+        <mat-label>Status</mat-label>
+        <mat-select [value]="ticket()!.status" (selectionChange)="onStatusChange($event)">
+          @for (opt of statusOptions; track opt.value) {
+          <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="priority-select">
+        <mat-label>Priority</mat-label>
+        <mat-select [value]="ticket()!.priority" (selectionChange)="onPriorityChange($event)">
+          @for (opt of priorityOptions; track opt.value) {
+          <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
       <span class="info"> From: {{ ticket()!.email }} | Phone: {{ ticket()!.phone }} </span>
     </div>
   </div>
@@ -64,14 +77,14 @@
         [(ngModel)]="replyText"
         rows="3"
         placeholder="Type your response here..."
-        [disabled]="ticket()!.status === 'Closed'"
+        [disabled]="ticket()!.status === TicketStatus.Closed"
       ></textarea>
     </mat-form-field>
     <div class="reply-actions">
       <button
         mat-flat-button
         color="primary"
-        [disabled]="!replyText() || ticket()!.status === 'Closed'"
+        [disabled]="!replyText() || ticket()!.status === TicketStatus.Closed"
         (click)="sendReply()"
       >
         <mat-icon>send</mat-icon> Send Reply

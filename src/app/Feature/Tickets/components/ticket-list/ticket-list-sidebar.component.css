@@ -1,11 +1,222 @@
+/* Container */
 .list-container {
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  border-right: 1px solid rgba(0, 0, 0, 0.05); /* Separator line instead of shadow box */
   height: 100%;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
+}
+
+.pagination-footer {
+  padding: 0.5rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  background: white;
+}
+
+.page-info {
+  font-size: 0.85rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+/* Scrollable List */
+.tickets-list {
+  overflow-y: auto;
+  height: 100%;
+  padding: 1rem; /* Add some padding around items */
+}
+
+.tickets-list::-webkit-scrollbar {
+  width: 6px;
+}
+.tickets-list::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
+/* Item Card */
+.ticket-item {
+  position: relative;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 0.75rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.ticket-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.06);
+  border-color: rgba(59, 130, 246, 0.3); /* Subtle blue border on hover */
+}
+
+.ticket-item.active {
+  background: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%);
+  border: 1px solid #3b82f6;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
+/* Header: Status + Date */
+.ticket-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.ticket-status {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Status Colors (Using new mapped classes) */
+.ticket-status.pending {
+  background: #eff6ff;
+  color: #3b82f6;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+.ticket-status.assigned {
+  background: #fffbeb;
+  color: #f59e0b;
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}
+.ticket-status.closed {
+  background: #f1f5f9;
+  color: #64748b;
+  border: 1px solid rgba(100, 116, 139, 0.2);
+}
+.ticket-status.rejected {
+  background: #fef2f2;
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.ticket-date {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+/* Subject */
+.ticket-subject {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1e293b;
+  line-height: 1.4;
+  /* Truncate text */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Meta: Priority + Email */
+.ticket-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.priority {
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.priority::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.priority.low::before {
+  background-color: #10b981;
+}
+.priority.low {
+  color: #10b981;
+}
+
+.priority.medium::before {
+  background-color: #3b82f6;
+}
+.priority.medium {
+  color: #3b82f6;
+}
+
+.priority.high::before {
+  background-color: #f59e0b;
+}
+.priority.high {
+  color: #f59e0b;
+}
+
+.priority.urgent::before {
+  background-color: #dc2626;
+}
+.priority.urgent {
+  color: #dc2626;
+}
+
+.sender {
+  font-size: 0.75rem;
+  color: #64748b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 120px;
+}
+
+/* Empty State */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #cbd5e1;
+  padding: 2rem;
+  text-align: center;
+}
+
+.empty-state mat-icon {
+  font-size: 64px;
+  width: 64px;
+  height: 64px;
+  margin-bottom: 1rem;
+  background: #f8fafc;
+  border-radius: 50%;
+  padding: 20px;
+  box-sizing: content-box;
+  color: #cbd5e1;
+}
+
+.empty-state p {
+  font-size: 1.1rem;
+  font-weight: 500;
 }
 
 .tickets-list {

@@ -13,8 +13,8 @@
       (click)="select.emit(ticket.id)"
     >
       <div class="ticket-header">
-        <span class="ticket-status" [class]="ticket.status.toLowerCase()">
-          {{ ticket.status }}
+        <span class="ticket-status" [class]="getStatusClass(ticket.status)">
+          {{ getStatusLabel(ticket.status) }}
         </span>
         <span class="ticket-date">{{ ticket.createdAt | date : 'MMM d' }}</span>
       </div>
@@ -22,8 +22,8 @@
       <h3 class="ticket-subject">{{ ticket.subject }}</h3>
 
       <div class="ticket-meta">
-        <span class="priority" [class]="ticket.priority.toLowerCase()">
-          {{ ticket.priority }}
+        <span class="priority" [class]="getPriorityClass(ticket.priority)">
+          {{ getPriorityLabel(ticket.priority) }}
         </span>
         <span class="sender">{{ ticket.email }}</span>
       </div>
@@ -31,4 +31,22 @@
     }
   </div>
   }
+
+  <div class="pagination-footer">
+    <button
+      mat-icon-button
+      [disabled]="!hasPreviousPage()"
+      (click)="pageChange.emit(currentPage() - 1)"
+    >
+      <mat-icon>chevron_left</mat-icon>
+    </button>
+    <span class="page-info">Page {{ currentPage() }}</span>
+    <button
+      mat-icon-button
+      [disabled]="!hasNextPage()"
+      (click)="pageChange.emit(currentPage() + 1)"
+    >
+      <mat-icon>chevron_right</mat-icon>
+    </button>
+  </div>
 </div>

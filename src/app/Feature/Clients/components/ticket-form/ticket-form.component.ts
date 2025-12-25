@@ -6,8 +6,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
-import { TicketPriority } from '../../../../Core/domain/models/ticket.model/ticket.model';
 import { TicketsService } from '../../../../Services/tickets/tickets.service';
+import { SitesService } from '../../../../Services/sites/sites.service';
 import { ProductsService } from '../../../../Services/products/products.service';
 import { Auth } from '../../../../Services/auth/auth';
 import { HttpClient } from '@angular/common/http';
@@ -34,6 +34,7 @@ export class TicketFormComponent {
   private fb = inject(FormBuilder);
   private ticketsService = inject(TicketsService);
   private productsService = inject(ProductsService);
+  private sitesService = inject(SitesService); // Inject SitesService
   private auth = inject(Auth);
   private http = inject(HttpClient);
 
@@ -45,12 +46,7 @@ export class TicketFormComponent {
   sites = signal<any[]>([]);
   selectedFiles = signal<File[]>([]);
 
-  priorities = [
-    { value: 0, label: 'Low', icon: 'arrow_downward', color: '#10b981' },
-    { value: 1, label: 'Medium', icon: 'remove', color: '#f59e0b' },
-    { value: 2, label: 'High', icon: 'arrow_upward', color: '#ef4444' },
-    { value: 3, label: 'Critical', icon: 'priority_high', color: '#dc2626' },
-  ];
+  private readonly defaultSeverity = 1;
 
   constructor() {
     this.ticketForm = this.fb.group({
@@ -58,7 +54,6 @@ export class TicketFormComponent {
       description: ['', [Validators.required, Validators.minLength(10)]],
       email: ['', [Validators.required, Validators.email]],
       phone: ['', [Validators.pattern(/^[\d\s\+\-\(\)]+$/)]],
-      priority: [1, [Validators.required]], // Default Medium
       productId: ['', [Validators.required]],
       siteId: ['', [Validators.required]],
     });
@@ -75,11 +70,10 @@ export class TicketFormComponent {
   }
 
   loadSites() {
-    this.http.get<any[]>(`${environment.apiUrl}/GetSites`).subscribe({
+    this.sitesService.getSites().subscribe({
       next: (sites) => {
         this.sites.set(sites);
-        // Auto-select first site for AccountAdmin
-        if (sites.length > 0) {
+        if (sites.length > 0 && !this.ticketForm.get('siteId')?.value) {
           this.ticketForm.patchValue({ siteId: sites[0].id });
         }
       },
@@ -96,7 +90,7 @@ export class TicketFormComponent {
         description: formVal.description,
         email: formVal.email,
         phoneNumber: formVal.phone,
-        severity: formVal.priority,
+        severity: this.defaultSeverity,
         productId: formVal.productId,
         siteId: formVal.siteId,
         attachments: this.selectedFiles(),
@@ -104,13 +98,15 @@ export class TicketFormComponent {
 
       this.ticketsService.createTicket(payload).subscribe({
         next: (res) => {
+          console.log(res);
           this.ticketCreated.emit(res);
           this.showSuccess = true;
-          this.selectedFiles.set([]); // Clear selected files
+
+          this.selectedFiles.set([]);
           this.ticketForm.reset({
-            priority: 1,
             siteId: this.sites()[0]?.id || '',
           });
+
           setTimeout(() => (this.showSuccess = false), 3000);
         },
         error: (err) => {
@@ -118,8 +114,22 @@ export class TicketFormComponent {
         },
       });
     } else {
+      console.log('Form Invalid:', this.ticketForm.errors);
+      Object.keys(this.ticketForm.controls).forEach((key) => {
+        const control = this.ticketForm.get(key);
+        if (control?.invalid) {
+          console.log(key, control.errors);
+        }
+      });
       this.ticketForm.markAllAsTouched();
     }
+  }
+
+  onReset(): void {
+    this.selectedFiles.set([]);
+    this.ticketForm.reset({
+      siteId: this.sites()[0]?.id || '',
+    });
   }
 
   onFileSelected(event: Event): void {
@@ -127,7 +137,6 @@ export class TicketFormComponent {
     if (input.files && input.files.length > 0) {
       const filesArray = Array.from(input.files);
 
-      // Validate file size (max 5MB per file)
       const maxSize = 5 * 1024 * 1024; // 5MB
       const validFiles = filesArray.filter((file) => {
         if (file.size > maxSize) {
@@ -138,7 +147,6 @@ export class TicketFormComponent {
       });
 
       this.selectedFiles.update((existing) => [...existing, ...validFiles]);
-      // Reset input to allow selecting the same file again
       input.value = '';
     }
   }

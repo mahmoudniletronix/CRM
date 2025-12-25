@@ -40,8 +40,11 @@
     </div>
 
     <!-- Tickets List Tab -->
-    <div class="tab-panel" *ngIf="activeTab() === 'list'">
+    <!-- <div class="tab-panel" *ngIf="activeTab() === 'list'">
       <app-tickets-list [tickets]="tickets()"></app-tickets-list>
+    </div> -->
+    <div class="tab-panel" *ngIf="activeTab() === 'list'">
+      <app-account-sites></app-account-sites>
     </div>
   </div>
 </div>

@@ -167,21 +167,6 @@
             </div>
           </div>
         </div>
-
-        <div class="form-row">
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Severity</mat-label>
-            <mat-select formControlName="priority">
-              <mat-option *ngFor="let p of priorities" [value]="p.value">
-                <div class="priority-option">
-                  <mat-icon [style.color]="p.color">{{ p.icon }}</mat-icon>
-                  <span>{{ p.label }}</span>
-                </div>
-              </mat-option>
-            </mat-select>
-            <mat-icon matPrefix>flag</mat-icon>
-          </mat-form-field>
-        </div>
       </div>
 
       <!-- Form Actions -->
@@ -200,7 +185,7 @@
         <button
           mat-stroked-button
           type="button"
-          (click)="ticketForm.reset({ priority: 'Medium' })"
+          (click)="onReset()"
           [disabled]="isSubmitting()"
           class="reset-btn"
         >

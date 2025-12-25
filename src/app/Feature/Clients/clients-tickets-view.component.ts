@@ -3,9 +3,9 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { TicketFormComponent } from './components/ticket-form/ticket-form.component';
-import { TicketsListComponent } from './components/tickets-list/tickets-list.component';
 import { TicketsService } from '../../Services/tickets/tickets.service';
 import { Auth } from '../../Services/auth/auth';
+import { AccountSitesComponent } from './components/AccountSites/account-sites.component';
 
 @Component({
   selector: 'app-clients-tickets-view',
@@ -15,7 +15,7 @@ import { Auth } from '../../Services/auth/auth';
     MatIconModule,
     MatButtonModule,
     TicketFormComponent,
-    TicketsListComponent,
+    AccountSitesComponent,
   ],
   templateUrl: './clients-tickets-view.component.html',
   styleUrls: ['./clients-tickets-view.component.css'],

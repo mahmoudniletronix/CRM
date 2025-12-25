@@ -4,7 +4,11 @@ import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { Ticket, TicketStatus } from '../../../../Core/domain/models/ticket.model/ticket.model';
+import {
+  Ticket,
+  TicketStatus,
+  TicketPriority,
+} from '../../../../Core/domain/models/ticket.model/ticket.model';
 import { TicketsService } from '../../../../Services/tickets/tickets.service';
 
 @Component({
@@ -22,42 +26,50 @@ export class TicketsListComponent {
 
   getStatusColor(status: TicketStatus): string {
     const colors = {
-      [TicketStatus.Open]: '#3b82f6',
-      [TicketStatus.InProgress]: '#f59e0b',
-      [TicketStatus.Resolved]: '#10b981',
+      [TicketStatus.Pending]: '#3b82f6',
+      [TicketStatus.Assigned]: '#f59e0b',
       [TicketStatus.Closed]: '#6b7280',
+      [TicketStatus.Rejected]: '#dc2626',
     };
     return colors[status] || '#6b7280';
   }
 
   getStatusIcon(status: TicketStatus): string {
     const icons = {
-      [TicketStatus.Open]: 'mail',
-      [TicketStatus.InProgress]: 'schedule',
-      [TicketStatus.Resolved]: 'check_circle',
-      [TicketStatus.Closed]: 'cancel',
+      [TicketStatus.Pending]: 'mail',
+      [TicketStatus.Assigned]: 'schedule',
+      [TicketStatus.Closed]: 'check_circle',
+      [TicketStatus.Rejected]: 'cancel',
     };
     return icons[status] || 'help';
   }
 
-  getPriorityColor(priority: string): string {
-    const colors = {
-      Low: '#10b981',
-      Medium: '#f59e0b',
-      High: '#ef4444',
-      Urgent: '#dc2626',
+  getPriorityColor(priority: TicketPriority): string {
+    // TicketPriority is a number now, but input might be expecting string?
+    // Wait, TicketPriority is enum number.
+    // Let's assume input 'tickets' has priority as number.
+    // The previous implementation used string keys "Low", "Medium" etc.
+    // We should either update the model to use numbers or handle mapping.
+    // Ticket interface says priority: TicketPriority (which is number).
+    // So priority here is likely number.
+    const colors: Record<number, string> = {
+      [TicketPriority.Low]: '#10b981',
+      [TicketPriority.Medium]: '#f59e0b',
+      [TicketPriority.High]: '#ef4444',
+      [TicketPriority.Urgent]: '#dc2626',
     };
-    return colors[priority as keyof typeof colors] || '#6b7280';
+    // Safe cast or handle if it's strictly typed
+    return colors[priority] || '#6b7280';
   }
 
-  getPriorityIcon(priority: string): string {
-    const icons = {
-      Low: 'arrow_downward',
-      Medium: 'remove',
-      High: 'arrow_upward',
-      Urgent: 'priority_high',
+  getPriorityIcon(priority: TicketPriority): string {
+    const icons: Record<number, string> = {
+      [TicketPriority.Low]: 'arrow_downward',
+      [TicketPriority.Medium]: 'remove',
+      [TicketPriority.High]: 'arrow_upward',
+      [TicketPriority.Urgent]: 'priority_high',
     };
-    return icons[priority as keyof typeof icons] || 'flag';
+    return icons[priority] || 'flag';
   }
 
   formatDate(date: Date): string {

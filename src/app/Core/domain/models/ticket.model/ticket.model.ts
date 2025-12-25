@@ -1,15 +1,15 @@
 export enum TicketStatus {
-  Open = 'Open',
-  InProgress = 'InProgress',
-  Resolved = 'Resolved',
-  Closed = 'Closed',
+  Pending = 1,
+  Assigned = 2,
+  Closed = 3,
+  Rejected = 4,
 }
 
 export enum TicketPriority {
-  Low = 'Low',
-  Medium = 'Medium',
-  High = 'High',
-  Urgent = 'Urgent',
+  Low = 1,
+  Medium = 2,
+  High = 3,
+  Urgent = 4,
 }
 
 export type MessageSender = 'client' | 'agent' | 'system';

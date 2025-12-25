@@ -1,0 +1,118 @@
+<div class="sites-container">
+  <!-- Loading State -->
+  <div class="loading-state" *ngIf="loading()">
+    <div class="spinner"></div>
+    <p>Loading your sites...</p>
+  </div>
+
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="!loading() && sites().length === 0">
+    <div class="empty-icon">
+      <mat-icon>business</mat-icon>
+    </div>
+    <h3>No Sites Found</h3>
+    <p>You don't have any sites assigned to your account yet.</p>
+  </div>
+
+  <!-- Sites Grid -->
+  <div class="sites-grid" *ngIf="!loading() && sites().length > 0">
+    <div class="site-card" *ngFor="let site of sites()">
+      <!-- Site Header -->
+      <div class="site-header" (click)="toggleSite(site.id)">
+        <div class="site-info">
+          <mat-icon class="site-icon">business</mat-icon>
+          <div class="site-details">
+            <h3 class="site-name">{{ site.nameEn }}</h3>
+            <p class="site-name-ar">{{ site.nameAr }}</p>
+          </div>
+        </div>
+        <div class="site-stats">
+          <div class="stat-item">
+            <mat-icon>shopping_bag</mat-icon>
+            <span>{{ site.products.length }} Products</span>
+          </div>
+          <div class="stat-item">
+            <mat-icon>confirmation_number</mat-icon>
+            <span>{{ site.tickets.length }} Tickets</span>
+          </div>
+          <mat-icon class="expand-icon" [class.expanded]="isSiteExpanded(site.id)">
+            expand_more
+          </mat-icon>
+        </div>
+      </div>
+
+      <!-- Expandable Content -->
+      <div class="site-content" [class.expanded]="isSiteExpanded(site.id)">
+        <!-- Products Section -->
+        <div class="section products-section" *ngIf="site.products.length > 0">
+          <h4 class="section-title">
+            <mat-icon>shopping_bag</mat-icon>
+            Products
+          </h4>
+          <div class="products-grid">
+            <div class="product-card" *ngFor="let product of site.products">
+              <div class="product-image" *ngIf="product.productImage">
+                <img [src]="product.productImage" [alt]="product.nameEn" />
+              </div>
+              <div class="product-info">
+                <h5 class="product-name">{{ product.nameEn }}</h5>
+                <p class="product-name-ar">{{ product.nameAr }}</p>
+                <p class="product-description">{{ product.descriptionEn }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tickets Section -->
+        <div class="section tickets-section" *ngIf="site.tickets.length > 0">
+          <h4 class="section-title">
+            <mat-icon>confirmation_number</mat-icon>
+            Support Tickets
+          </h4>
+          <div class="tickets-grid">
+            <div class="ticket-card" *ngFor="let ticket of site.tickets">
+              <div class="ticket-header">
+                <span class="ticket-id">#{{ ticket.id.slice(-8) }}</span>
+                <div class="ticket-badges">
+                  <span
+                    class="status-badge"
+                    [style.background-color]="getStatusColor(ticket.status)"
+                  >
+                    {{ getStatusLabel(ticket.status) }}
+                  </span>
+                  <span class="severity-badge" [style.color]="getSeverityColor(ticket.severity)">
+                    {{ getSeverityLabel(ticket.severity) }}
+                  </span>
+                </div>
+              </div>
+              <h5 class="ticket-subject">{{ ticket.subject }}</h5>
+              <p class="ticket-description">{{ ticket.description }}</p>
+              <div class="ticket-footer">
+                <div class="contact-info">
+                  <span class="info-item">
+                    <mat-icon>email</mat-icon>
+                    {{ ticket.email }}
+                  </span>
+                  <span class="info-item" *ngIf="ticket.phoneNumber">
+                    <mat-icon>phone</mat-icon>
+                    {{ ticket.phoneNumber }}
+                  </span>
+                </div>
+                <div class="attachments" *ngIf="ticket.attachments.length > 0">
+                  <mat-icon>attach_file</mat-icon>
+                  <span>{{ ticket.attachments.length }} attachment(s)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty State for Sections -->
+        <div class="empty-section" *ngIf="site.products.length === 0 && site.tickets.length === 0">
+          <mat-icon>inbox</mat-icon>
+          <p>No products or tickets found for this site</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

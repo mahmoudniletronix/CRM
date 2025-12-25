@@ -9,9 +9,12 @@ import {
   TicketPriority,
 } from '../../Core/domain/models/ticket.model/ticket.model';
 
+import { SitesService } from '../../Services/sites/sites.service';
+
 @Injectable({ providedIn: 'root' })
 export class TicketsService {
   private readonly http = inject(HttpClient);
+  private readonly sitesService = inject(SitesService);
   private readonly baseUrl = `${environment.apiUrl}/api/Ticket`;
 
   // Signal-based state
@@ -26,7 +29,7 @@ export class TicketsService {
 
   // Computed values
   readonly openTicketsCount = computed(
-    () => this.ticketsSignal().filter((t) => t.status === TicketStatus.Open).length
+    () => this.ticketsSignal().filter((t) => t.status === TicketStatus.Pending).length
   );
 
   readonly totalTicketsCount = computed(() => this.ticketsSignal().length);
@@ -38,8 +41,37 @@ export class TicketsService {
   /**
    * Create a new ticket
    */
+  updateTicketStatus(
+    id: string,
+    status: TicketStatus,
+    severity: TicketPriority,
+    description: string = 'Updated by Admin'
+  ): Observable<void> {
+    const payload = {
+      id,
+      status,
+      severity,
+      description,
+    };
+    return this.http.post<void>(`${this.baseUrl}/UpdateStatus`, payload).pipe(
+      tap(() => {
+        this.ticketsSignal.update((tickets) =>
+          tickets.map((t) => (t.id === id ? { ...t, status, priority: severity } : t))
+        );
+      })
+    );
+  }
+
+  /**
+   * Create a new ticket
+   */
   createTicket(payload: TicketCreatePayload): Observable<unknown> {
-    const formData = this.toFormData(payload);
+    const safePayload: TicketCreatePayload = {
+      ...payload,
+      severity: Number.isFinite(payload.severity) ? payload.severity : 1,
+    };
+
+    const formData = this.toFormData(safePayload);
 
     this.isSubmitting.set(true);
     this.lastCreatedOk.set(false);
@@ -53,12 +85,12 @@ export class TicketsService {
 
           const newTicket: Ticket = {
             id: response?.id || this.generateId(),
-            subject: payload.subject,
-            description: payload.description,
-            email: payload.email,
-            phone: payload.phoneNumber || '',
-            status: TicketStatus.Open,
-            priority: this.mapSeverityToPriority(payload.severity),
+            subject: safePayload.subject,
+            description: safePayload.description,
+            email: safePayload.email,
+            phone: safePayload.phoneNumber || '',
+            status: TicketStatus.Pending,
+            priority: this.mapSeverityToPriority(safePayload.severity),
             messages: [],
             createdAt: new Date(),
           };
@@ -83,6 +115,50 @@ export class TicketsService {
     return of(this.ticketsSignal());
   }
 
+  // Pagination State
+  readonly currentPage = signal(1);
+  readonly pageSize = signal(10);
+  readonly totalItems = signal(0);
+  readonly hasNextPage = signal(false);
+  readonly hasPreviousPage = signal(false);
+
+  loadSuperAdminTickets(page: number = 1, pageSize: number = 10): void {
+    console.log(`Loading Super Admin Tickets (Page: ${page}, Size: ${pageSize})...`);
+    this.sitesService.getSuperAdminSites(page, pageSize).subscribe({
+      next: (response) => {
+        console.log('Sites Response received:', response);
+
+        // Update pagination signals
+        this.currentPage.set(response.currentPage);
+        this.pageSize.set(response.pageSize);
+        this.totalItems.set(response.totalItems);
+        this.hasNextPage.set(response.hasNextPage);
+        this.hasPreviousPage.set(response.hasPreviousPage);
+
+        const allTickets: Ticket[] = [];
+        response.data.forEach((site) => {
+          console.log(`Processing site: ${site.nameEn}, Tickets count: ${site.tickets?.length}`);
+          site.tickets.forEach((t) => {
+            allTickets.push({
+              id: t.id,
+              subject: t.subject,
+              description: t.description,
+              email: t.email,
+              phone: t.phoneNumber || '',
+              status: t.status as unknown as TicketStatus,
+              priority: this.mapSeverityToPriority(t.severity),
+              messages: [],
+              createdAt: new Date(),
+            });
+          });
+        });
+        console.log('Total flattened tickets:', allTickets.length);
+        this.ticketsSignal.set(allTickets);
+      },
+      error: (err) => console.error('Failed to load super admin tickets', err),
+    });
+  }
+
   getTicketById(id: string): Ticket | undefined {
     return this.ticketsSignal().find((t) => t.id === id);
   }
@@ -96,7 +172,7 @@ export class TicketsService {
   resolveTicket(id: string): Observable<void> {
     this.ticketsSignal.update((tickets) =>
       tickets.map((t) =>
-        t.id === id ? { ...t, status: TicketStatus.Resolved, updatedAt: new Date() } : t
+        t.id === id ? { ...t, status: TicketStatus.Closed, updatedAt: new Date() } : t
       )
     );
     this.saveToLocalStorage();

@@ -34,7 +34,24 @@ export class TicketsManagementComponent {
   readonly tickets = this.ticketsService.tickets;
   readonly selectedTicketId = signal<string | null>(null);
 
+  // Pagination Signals
+  readonly currentPage = this.ticketsService.currentPage;
+  readonly hasNextPage = this.ticketsService.hasNextPage;
+  readonly hasPreviousPage = this.ticketsService.hasPreviousPage;
+
   readonly currentFilters = signal<TicketFilter>({ status: 'All', priority: 'All' });
+
+  constructor() {
+    this.loadTickets();
+  }
+
+  loadTickets() {
+    this.ticketsService.loadSuperAdminTickets(this.currentPage());
+  }
+
+  onPageChange(page: number) {
+    this.ticketsService.loadSuperAdminTickets(page);
+  }
 
   // Computed filtered list
   readonly filteredTickets = computed(() => {
@@ -72,11 +89,16 @@ export class TicketsManagementComponent {
   }
 
   onSendMessage(content: string) {
-    const id = this.selectedTicketId();
-    if (id) {
-      this.ticketsService.addMessage(id, content, 'agent').subscribe({
-        error: (err) => console.error('Failed to send message', err),
-      });
+    const ticket = this.selectedTicket();
+    if (ticket) {
+      this.ticketsService
+        .updateTicketStatus(ticket.id, ticket.status, ticket.priority, content)
+        .subscribe({
+          next: () => {
+            this.ticketsService.addMessage(ticket.id, content, 'agent').subscribe();
+          },
+          error: (err) => console.error('Failed to send message', err),
+        });
     }
   }
 
