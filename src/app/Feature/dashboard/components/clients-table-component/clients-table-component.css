@@ -211,6 +211,15 @@ tr.mat-mdc-row:last-child td {
   font-weight: 600;
 }
 
+.site-name-ar {
+  font-weight: 700;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #4f46e5;
+  border-right: 1px solid #cbd5e1;
+  padding-right: 8px;
+  margin-right: 4px;
+}
+
 .prod-date {
   font-size: 0.7rem;
   background: #fff;

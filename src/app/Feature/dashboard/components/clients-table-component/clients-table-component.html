@@ -1,5 +1,7 @@
-<h3 class="title">Clients</h3>
-<p class="sub">Each client shows ticket status counters.</p>
+<div class="header mt-2 mb-2 container-fluid">
+  <h3 class="title">Clients</h3>
+  <p class="sub">Each client shows ticket status counters.</p>
+</div>
 
 <div class="table-wrap">
   <table mat-table [dataSource]="accounts()" multiTemplateDataRows class="mat-elevation-z0">
@@ -54,6 +56,7 @@
               <div class="products-list">
                 @for (prod of site.products; track $index) {
                 <div class="product-chip">
+                  <span class="site-name-ar">{{ site.nameAr }}</span>
                   <span class="prod-name">{{ prod.nameEn }}</span>
                   <span class="prod-date" *ngIf="prod.supportDateEnd">
                     Exp: {{ prod.supportDateEnd | date : 'mediumDate' }}

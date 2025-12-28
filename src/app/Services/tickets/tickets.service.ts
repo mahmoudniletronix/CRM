@@ -193,13 +193,17 @@ export class TicketsService {
   }
 
   resolveTicket(id: string): Observable<void> {
-    this.ticketsSignal.update((tickets) =>
-      tickets.map((t) =>
-        t.id === id ? { ...t, status: TicketStatus.Closed, updatedAt: new Date() } : t
-      )
+    const ticket = this.ticketsSignal().find((t) => t.id === id);
+    if (!ticket) {
+      return of(undefined);
+    }
+
+    return this.updateTicketStatus(
+      id,
+      TicketStatus.Closed,
+      ticket.priority, // Preserve existing priority
+      'Resolved by user'
     );
-    this.saveToLocalStorage();
-    return of(undefined);
   }
 
   addMessage(
