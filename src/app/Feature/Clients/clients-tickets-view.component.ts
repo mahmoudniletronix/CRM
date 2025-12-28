@@ -26,9 +26,14 @@ export class ClientsTicketsViewComponent {
 
   readonly tickets = this.ticketsService.tickets;
   readonly activeTab = signal<'create' | 'list'>('create');
+  readonly totalTickets = signal(0);
 
   ngOnInit() {
     this.ticketsService.loadTickets().subscribe();
+    this.ticketsService.getAccountStats().subscribe({
+      next: (stats) => this.totalTickets.set(stats.ticketCount),
+      error: (err) => console.error('Failed to load tickets count', err),
+    });
   }
 
   onTicketCreated(dto: any): void {

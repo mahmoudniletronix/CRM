@@ -27,6 +27,10 @@ export class TicketsService {
   readonly lastCreatedOk = signal(false);
   readonly errorMessage = signal<string | null>(null);
 
+  getAccountStats(): Observable<{ ticketCount: number }> {
+    return this.http.get<{ ticketCount: number }>(`${this.baseUrl}/GetAccount`);
+  }
+
   // Computed values
   readonly openTicketsCount = computed(
     () => this.ticketsSignal().filter((t) => t.status === TicketStatus.Pending).length
