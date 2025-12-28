@@ -2,37 +2,38 @@
    Design Tokens
 ================================ */
 :host {
-  --bg-1: #f8fafc;
-  --bg-2: #f1f5f9;
-
-  --text-dark: #0f172a;
+  /* Modern soft gradient background */
+  --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%);
+  --text-dark: #1e293b;
   --text-muted: #64748b;
+  --card-bg: rgba(255, 255, 255, 0.9);
+  --glass-border: 1px solid rgba(255, 255, 255, 0.8);
+  --glass-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  --hover-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --card-radius: 24px;
 
-  --card-bg: #ffffff;
-  --card-radius: 20px;
+  /* Vibrant Gradients for Stats */
+  --grad-primary: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  --grad-warning: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  --grad-purple: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  --grad-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
 
-  --primary: #3b82f6;
-  --warning: #f59e0b;
-  --purple: #8b5cf6;
-  --success: #10b981;
+  /* Light variants for backgrounds */
+  --bg-primary-light: #eff6ff;
+  --bg-warning-light: #fffbeb;
+  --bg-purple-light: #f5f3ff;
+  --bg-success-light: #ecfdf5;
 
-  --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 10px 15px -3px rgba(0, 0, 0, 0.05),
-    0 0 0 1px rgba(0, 0, 0, 0.02);
-
-  --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-
-  --gap-lg: 2rem;
   --pad-lg: 2rem;
 }
 
 /* ===============================
    Layout
 ================================ */
-
 .dashboard-container {
   min-height: 100dvh;
   padding: var(--pad-lg);
-  background: linear-gradient(135deg, var(--bg-1), var(--bg-2));
+  background: var(--bg-gradient);
   box-sizing: border-box;
 }
 
@@ -45,26 +46,22 @@
   align-items: center;
   flex-wrap: wrap;
   gap: 1.5rem;
-
   margin-bottom: 2.5rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid rgba(15, 23, 42, 0.08); /* Subtle separator */
 }
 
 .page-title {
-  margin: 0 0 0.5rem;
-  font-size: 2rem;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  background: linear-gradient(135deg, var(--text-dark), #334155);
-  background-clip: text;
+  margin: 0 0 0.25rem;
+  font-size: 2.5rem;
+  font-weight: 800; /* Extra bold */
+  letter-spacing: -0.04em;
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .page-subtitle {
   margin: 0;
-  font-size: 1rem;
+  font-size: 1.1rem;
   font-weight: 500;
   color: var(--text-muted);
 }
@@ -75,16 +72,18 @@
 }
 
 .header-actions button {
-  border-radius: 9999px !important;
-  padding: 0.6rem 1.5rem !important;
+  border-radius: 100px !important; /* Pill shape */
+  padding: 0.75rem 1.75rem !important;
   font-weight: 700 !important;
-  box-shadow: var(--shadow-sm) !important;
-  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+  font-size: 0.95rem !important;
+  letter-spacing: 0.02em !important;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
 .header-actions button:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-hover) !important;
+  box-shadow: 0 8px 16px rgba(59, 130, 246, 0.35) !important;
 }
 
 /* ===============================
@@ -92,115 +91,157 @@
 ================================ */
 .stats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 1.5rem;
-  margin-bottom: 2.5rem;
+  margin-bottom: 3rem;
 }
 
 .stat-card {
+  position: relative;
   background: var(--card-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   padding: 1.75rem;
   border-radius: var(--card-radius);
-  box-shadow: var(--shadow-sm);
-  border: 1px solid rgba(15, 23, 42, 0.04);
-  position: relative;
-  overflow: hidden;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: var(--glass-border);
+  box-shadow: var(--glass-shadow);
   display: flex;
-  flex-direction: column;
-  gap: 1rem;
+  align-items: flex-start;
+  gap: 1.25rem;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  overflow: hidden;
+  cursor: default;
 }
 
 .stat-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-hover);
+  transform: translateY(-8px);
+  box-shadow: var(--hover-shadow);
+  border-color: rgba(255, 255, 255, 1);
 }
 
-/* Top Accent Borders */
-.stat-card.clients {
-  border-top: 4px solid var(--primary);
-}
-.stat-card.pending {
-  border-top: 4px solid var(--warning);
-}
-.stat-card.assigned {
-  border-top: 4px solid var(--purple);
-}
-.stat-card.closed {
-  border-top: 4px solid var(--success);
-}
-
-.stat-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
+/* Icon Wrapper */
+.stat-icon-wrapper {
+  width: 64px;
+  height: 64px;
+  border-radius: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
-  margin-bottom: 0.5rem;
+  flex-shrink: 0;
+  color: white;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
 }
 
-/* Icon Colors */
-.stat-card.clients .stat-icon {
-  background: #eff6ff;
-  color: var(--primary);
-}
-.stat-card.pending .stat-icon {
-  background: #fffbeb;
-  color: var(--warning);
-}
-.stat-card.assigned .stat-icon {
-  background: #f5f3ff;
-  color: var(--purple);
-}
-.stat-card.closed .stat-icon {
-  background: #ecfdf5;
-  color: var(--success);
+.stat-icon-wrapper mat-icon {
+  font-size: 32px;
+  width: 32px;
+  height: 32px;
 }
 
-.stat-info {
+/* Content */
+.stat-content {
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  z-index: 1; /* Above decorator */
 }
 
 .stat-value {
-  font-size: 2.25rem;
+  font-size: 2.75rem;
   font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
   color: var(--text-dark);
-  line-height: 1;
-  letter-spacing: -0.02em;
   margin-bottom: 0.25rem;
 }
 
 .stat-label {
-  font-size: 0.875rem;
+  font-size: 0.9rem;
   font-weight: 600;
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
+/* Decorative Background Element */
+.stat-decorator {
+  position: absolute;
+  top: -20px;
+  right: -20px;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  opacity: 0.08;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Theme Colors */
+.stat-card.clients .stat-icon-wrapper {
+  background: var(--grad-primary);
+}
+.stat-card.clients .stat-decorator {
+  background: var(--grad-primary);
+}
+.stat-card.clients:hover .stat-icon-wrapper {
+  transform: scale(1.1) rotate(-5deg);
+  transition: transform 0.4s ease;
+}
+
+.stat-card.pending .stat-icon-wrapper {
+  background: var(--grad-warning);
+}
+.stat-card.pending .stat-decorator {
+  background: var(--grad-warning);
+}
+.stat-card.pending:hover .stat-icon-wrapper {
+  transform: scale(1.1) rotate(5deg);
+  transition: transform 0.4s ease;
+}
+
+.stat-card.assigned .stat-icon-wrapper {
+  background: var(--grad-purple);
+}
+.stat-card.assigned .stat-decorator {
+  background: var(--grad-purple);
+}
+.stat-card.assigned:hover .stat-icon-wrapper {
+  transform: scale(1.1) rotate(-5deg);
+  transition: transform 0.4s ease;
+}
+
+.stat-card.closed .stat-icon-wrapper {
+  background: var(--grad-success);
+}
+.stat-card.closed .stat-decorator {
+  background: var(--grad-success);
+}
+.stat-card.closed:hover .stat-icon-wrapper {
+  transform: scale(1.1) rotate(5deg);
+  transition: transform 0.4s ease;
+}
+
 /* ===============================
-   Table Section (Clients Table)
+   Table Section
 ================================ */
 app-clients-table-component {
   display: block;
-  background: var(--card-bg);
+  background: white;
   border-radius: var(--card-radius);
-  padding: var(--pad-lg);
-  box-shadow: var(--shadow-sm);
-  border: 1px solid rgba(15, 23, 42, 0.04);
-  animation: fadeIn 0.6s ease-out;
+  padding: 0; /* Let table handle padding */
+  box-shadow: var(--glass-shadow);
+  border: 1px solid rgba(0, 0, 0, 0.03);
+  overflow: hidden; /* For border radius */
+  animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* ===============================
    Animations
 ================================ */
-@keyframes fadeIn {
+@keyframes slideUp {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(30px);
   }
   to {
     opacity: 1;
@@ -224,7 +265,6 @@ app-clients-table-component {
 
   .header-actions {
     width: 100%;
-    justify-content: stretch;
   }
 
   .header-actions button {
@@ -232,7 +272,11 @@ app-clients-table-component {
     justify-content: center;
   }
 
+  .stat-card {
+    padding: 1.5rem;
+  }
+
   .stat-value {
-    font-size: 1.8rem;
+    font-size: 2.25rem;
   }
 }

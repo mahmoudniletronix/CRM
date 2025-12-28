@@ -25,27 +25,47 @@
   <!-- KPI Cards -->
   <div class="stats">
     <div class="stat-card clients">
-      <div class="stat-icon">👥</div>
-      <div class="stat-label">Total Clients</div>
-      <div class="stat-value">{{ totals().clients }}</div>
+      <div class="stat-icon-wrapper">
+        <mat-icon>groups</mat-icon>
+      </div>
+      <div class="stat-content">
+        <div class="stat-value">{{ totals().clients }}</div>
+        <div class="stat-label">Total Clients</div>
+      </div>
+      <div class="stat-decorator"></div>
     </div>
 
     <div class="stat-card pending">
-      <div class="stat-icon">⏳</div>
-      <div class="stat-label">Pending Tickets</div>
-      <div class="stat-value">{{ totals().pending }}</div>
+      <div class="stat-icon-wrapper">
+        <mat-icon>hourglass_empty</mat-icon>
+      </div>
+      <div class="stat-content">
+        <div class="stat-value">{{ totals().pending }}</div>
+        <div class="stat-label">Pending Tickets</div>
+      </div>
+      <div class="stat-decorator"></div>
     </div>
 
     <div class="stat-card assigned">
-      <div class="stat-icon">📋</div>
-      <div class="stat-label">Assigned Tickets</div>
-      <div class="stat-value">{{ totals().assigned }}</div>
+      <div class="stat-icon-wrapper">
+        <mat-icon>assignment_ind</mat-icon>
+      </div>
+      <div class="stat-content">
+        <div class="stat-value">{{ totals().assigned }}</div>
+        <div class="stat-label">Assigned Tickets</div>
+      </div>
+      <div class="stat-decorator"></div>
     </div>
 
     <div class="stat-card closed">
-      <div class="stat-icon">✅</div>
-      <div class="stat-label">Closed Tickets</div>
-      <div class="stat-value">{{ totals().closed }}</div>
+      <div class="stat-icon-wrapper">
+        <mat-icon>check_circle</mat-icon>
+      </div>
+      <div class="stat-content">
+        <div class="stat-value">{{ totals().closed }}</div>
+        <div class="stat-label">Closed Tickets</div>
+      </div>
+      <div class="stat-decorator"></div>
     </div>
   </div>
   <!-- clients table -->
