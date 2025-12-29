@@ -46,5 +46,14 @@ export const routes: Routes = [
         (m) => m.ClientsTicketsViewComponent
       ),
   },
+  {
+    path: 'renewal',
+    canActivate: [RoleGuard],
+    data: { roles: ['SuperAdmin'] },
+    loadComponent: () =>
+      import('./Feature/dashboard/components/renewal-products/renewal-products.component').then(
+        (m) => m.RenewalProductsComponent
+      ),
+  },
   { path: '**', redirectTo: 'login' },
 ];

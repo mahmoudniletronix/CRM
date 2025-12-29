@@ -3,14 +3,24 @@ import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ClientsTableComponent } from './components/clients-table-component/clients-table-component';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterLink, RouterModule } from '@angular/router';
 import { Auth } from '../../Services/auth/auth';
 import { ClientCreateComponent } from '../Client-Management/components/client-create/client-create-component';
-import { DashboardService, DashboardStats } from '../../Services/dashboard/dashboard.service';
+import { DashboardService } from '../../Services/dashboard/dashboard.service';
+import { ElementRef, ViewChild } from '@angular/core';
+import { DashboardStats } from '../../Core/domain/models/Dashboard KPI/DashboardStats.model';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, MatButtonModule, MatIconModule, RouterModule, ClientsTableComponent],
+  imports: [
+    CommonModule,
+    MatButtonModule,
+    MatIconModule,
+    RouterModule,
+    ClientsTableComponent,
+    RouterLink,
+  ],
+
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })
@@ -19,6 +29,8 @@ export class Dashboard implements OnInit {
   private readonly dashboardService = inject(DashboardService);
   private readonly router = inject(Router);
 
+  @ViewChild('renewalSection', { read: ElementRef }) renewalSection!: ElementRef;
+
   readonly user = this.authService.currentUser;
 
   readonly stats = signal<DashboardStats>({
@@ -26,6 +38,8 @@ export class Dashboard implements OnInit {
     totalPendingTickets: 0,
     totalAssignedTickets: 0,
     totalClosedTickets: 0,
+    totalProductsEndedWithing30Days: 0,
+    ttoalProductsEnded: 0,
   });
 
   readonly totals = computed(() => {
@@ -34,6 +48,8 @@ export class Dashboard implements OnInit {
       pending: this.stats().totalPendingTickets,
       assigned: this.stats().totalAssignedTickets,
       closed: this.stats().totalClosedTickets,
+      renewals: this.stats().totalProductsEndedWithing30Days,
+      expired: this.stats().ttoalProductsEnded,
     };
   });
 
@@ -44,6 +60,10 @@ export class Dashboard implements OnInit {
       },
       error: (err) => console.error('Failed to load dashboard stats', err),
     });
+  }
+
+  scrollToRenewals() {
+    this.renewalSection?.nativeElement?.scrollIntoView({ behavior: 'smooth' });
   }
 
   private animateStats(target: DashboardStats) {
@@ -73,6 +93,15 @@ export class Dashboard implements OnInit {
         totalClosedTickets: Math.floor(
           startValues.totalClosedTickets +
             (target.totalClosedTickets - startValues.totalClosedTickets) * ease
+        ),
+        totalProductsEndedWithing30Days: Math.floor(
+          startValues.totalProductsEndedWithing30Days +
+            (target.totalProductsEndedWithing30Days - startValues.totalProductsEndedWithing30Days) *
+              ease
+        ),
+        ttoalProductsEnded: Math.floor(
+          startValues.ttoalProductsEnded +
+            (target.ttoalProductsEnded - startValues.ttoalProductsEnded) * ease
         ),
       });
 

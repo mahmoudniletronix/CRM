@@ -1,0 +1,315 @@
+<div class="renewal-container">
+  <!-- Header -->
+  <div class="renewal-header d-flex justify-content-between align-items-center">
+    <div class="header-content">
+      <div class="header-icon-wrapper">
+        <mat-icon>inventory_2</mat-icon>
+      </div>
+      <div class="header-titles">
+        <h2>Product Renewal Status</h2>
+        <p>Monitor and manage client product subscriptions</p>
+      </div>
+    </div>
+    <div class="header-stats">
+      <div class="stat-badge">
+        <span class="count">{{ pendingRenewals().length }}</span>
+        <span class="label">Pending</span>
+      </div>
+    </div>
+    <!-- back to dashboard button -->
+    <button mat-stroked-button color="primary" class="back-button" routerLink="/dashboard">
+      <mat-icon>arrow_back</mat-icon>
+      Back to Dashboard
+    </button>
+  </div>
+
+  <!-- Tabs Section -->
+  <mat-tab-group animationDuration="0ms" class="premium-tabs">
+    <!-- Pending Tab -->
+    <mat-tab label="Pending Renewals">
+      <!-- Filters -->
+      <div class="filter-toolbar">
+        <span class="filter-label">Expiring Within:</span>
+        <mat-button-toggle-group
+          [value]="filterDays()"
+          (change)="onFilterChange($event.value)"
+          appearance="legacy"
+          name="fontStyle"
+          aria-label="Font Style"
+        >
+          <mat-button-toggle [value]="5">5 Days</mat-button-toggle>
+          <mat-button-toggle [value]="15">15 Days</mat-button-toggle>
+          <mat-button-toggle [value]="30">30 Days</mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
+
+      <div class="table-frame">
+        <div class="table-container">
+          <table mat-table [dataSource]="filteredPendingRenewals()" class="premium-table">
+            <!-- Account Name Column -->
+            <ng-container matColumnDef="accountName">
+              <th mat-header-cell *matHeaderCellDef>Client Account</th>
+              <td mat-cell *matCellDef="let element">
+                <div class="cell-content">
+                  <div class="client-avatar">
+                    {{ element.accountName.charAt(0).toUpperCase() }}
+                  </div>
+                  <span class="text-bold">{{ element.accountName }}</span>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Site Name Column -->
+            <ng-container matColumnDef="siteName">
+              <th mat-header-cell *matHeaderCellDef>Site Location</th>
+              <td mat-cell *matCellDef="let element">
+                <div class="site-badge">
+                  <mat-icon>place</mat-icon>
+                  {{ element.siteName }}
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Product Name Column -->
+            <ng-container matColumnDef="productName">
+              <th mat-header-cell *matHeaderCellDef>Product</th>
+              <td mat-cell *matCellDef="let element">
+                <span class="product-pill">{{ element.productName }}</span>
+              </td>
+            </ng-container>
+
+            <!-- Days Remaining Column -->
+            <ng-container matColumnDef="daysRemaining">
+              <th mat-header-cell *matHeaderCellDef>Status</th>
+              <td mat-cell *matCellDef="let element" class="status-cell">
+                <span
+                  class="status-indicator"
+                  [ngClass]="getDaysStatusClass(element.daysRemaining)"
+                >
+                  <span class="dot"></span>
+                  <span class="status-text">
+                    {{
+                      element.daysRemaining < 0
+                        ? 'Expired (' + Math.abs(element.daysRemaining) + ' days ago)'
+                        : element.daysRemaining + ' Days Left'
+                    }}
+                  </span>
+                </span>
+              </td>
+            </ng-container>
+
+            <!-- Support End Date Column -->
+            <ng-container matColumnDef="supportEndDate">
+              <th mat-header-cell *matHeaderCellDef>Expiry Date</th>
+              <td
+                mat-cell
+                *matCellDef="let element"
+                class="date-cell clickable-cell"
+                (click)="picker.open()"
+              >
+                <input
+                  matInput
+                  [matDatepicker]="picker"
+                  [(ngModel)]="element.supportEndDate"
+                  (dateChange)="onDateChange(element, $event)"
+                  class="hidden-input"
+                />
+                <span class="date-display">
+                  {{ element.supportEndDate | date : 'mediumDate' }}
+                  <mat-icon class="edit-icon">edit_calendar</mat-icon>
+                </span>
+                <mat-datepicker #picker></mat-datepicker>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns" class="table-row"></tr>
+
+            <!-- No Data Row -->
+            <tr class="mat-row" *matNoDataRow>
+              <td class="mat-cell no-data" colspan="5">
+                <div class="empty-state">
+                  <mat-icon>check_circle_outline</mat-icon>
+                  <p>All cleared! No pending renewals.</p>
+                </div>
+              </td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- Paginator -->
+        <mat-paginator
+          [length]="totalItems()"
+          [pageSize]="pageSize()"
+          [pageIndex]="pageIndex()"
+          [pageSizeOptions]="[5, 10, 25, 100]"
+          (page)="onPageChange($event)"
+          aria-label="Select page"
+        >
+        </mat-paginator>
+      </div>
+    </mat-tab>
+
+    <!-- Renewed Tab -->
+    <mat-tab label="Monthly Renewals Report">
+      <div class="table-frame">
+        <div class="table-container">
+          <table mat-table [dataSource]="renewedProducts()" class="premium-table">
+            <!-- Account Name Column -->
+            <ng-container matColumnDef="accountName">
+              <th mat-header-cell *matHeaderCellDef>Client Account</th>
+              <td mat-cell *matCellDef="let element">
+                <div class="cell-content">
+                  <div class="client-avatar success">
+                    {{ element.accountName.charAt(0).toUpperCase() }}
+                  </div>
+                  <span class="text-bold">{{ element.accountName }}</span>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Site Name Column -->
+            <ng-container matColumnDef="siteName">
+              <th mat-header-cell *matHeaderCellDef>Site Location</th>
+              <td mat-cell *matCellDef="let element">
+                <div class="site-badge">
+                  <mat-icon>place</mat-icon>
+                  {{ element.siteName }}
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Product Name Column -->
+            <ng-container matColumnDef="productName">
+              <th mat-header-cell *matHeaderCellDef>Product</th>
+              <td mat-cell *matCellDef="let element">
+                <span class="product-pill">{{ element.productName }}</span>
+              </td>
+            </ng-container>
+
+            <!-- Days Remaining Column -->
+            <ng-container matColumnDef="daysRemaining">
+              <th mat-header-cell *matHeaderCellDef>Status</th>
+              <td mat-cell *matCellDef="let element" class="status-cell">
+                <span class="status-indicator success">
+                  <span class="dot"></span>
+                  <span class="status-text">Renewed</span>
+                </span>
+              </td>
+            </ng-container>
+
+            <!-- Support End Date Column -->
+            <ng-container matColumnDef="supportEndDate">
+              <th mat-header-cell *matHeaderCellDef>New Expiry Date</th>
+              <td mat-cell *matCellDef="let element" class="date-cell">
+                <span class="renewed-date">
+                  {{ element.supportEndDate | date : 'mediumDate' }}
+                </span>
+              </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns" class="table-row"></tr>
+
+            <!-- No Data Row -->
+            <tr class="mat-row" *matNoDataRow>
+              <td class="mat-cell no-data" colspan="5">
+                <div class="empty-state">
+                  <mat-icon>history</mat-icon>
+                  <p>No processed renewals yet.</p>
+                </div>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </mat-tab>
+
+    <!-- Expired Products Tab -->
+    <mat-tab label="Expired Products">
+      <div class="table-frame">
+        <div class="table-container">
+          <table mat-table [dataSource]="closedProducts()" class="premium-table">
+            <!-- Account Name Column -->
+            <ng-container matColumnDef="accountName">
+              <th mat-header-cell *matHeaderCellDef>Client Account</th>
+              <td mat-cell *matCellDef="let element">
+                <div class="cell-content">
+                  <div class="client-avatar expired">
+                    {{ element.accountName.charAt(0).toUpperCase() }}
+                  </div>
+                  <span class="text-bold">{{ element.accountName }}</span>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Site Name Column -->
+            <ng-container matColumnDef="siteName">
+              <th mat-header-cell *matHeaderCellDef>Site Location</th>
+              <td mat-cell *matCellDef="let element">
+                <div class="site-badge">
+                  <mat-icon>place</mat-icon>
+                  {{ element.siteName }}
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Product Name Column -->
+            <ng-container matColumnDef="productName">
+              <th mat-header-cell *matHeaderCellDef>Product</th>
+              <td mat-cell *matCellDef="let element">
+                <span class="product-pill">{{ element.productName }}</span>
+              </td>
+            </ng-container>
+
+            <!-- Days Remaining Column -->
+            <ng-container matColumnDef="daysRemaining">
+              <th mat-header-cell *matHeaderCellDef>Status</th>
+              <td mat-cell *matCellDef="let element" class="status-cell">
+                <span class="status-indicator expired">
+                  <span class="dot"></span>
+                  <span class="status-text">
+                    Expired {{ Math.abs(element.daysRemaining) }} days ago
+                  </span>
+                </span>
+              </td>
+            </ng-container>
+
+            <!-- Support End Date Column (Read-only) -->
+            <ng-container matColumnDef="supportEndDate">
+              <th mat-header-cell *matHeaderCellDef>Expiry Date</th>
+              <td mat-cell *matCellDef="let element" class="date-cell">
+                <span class="expired-date">
+                  {{ element.supportEndDate | date : 'mediumDate' }}
+                </span>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="closedProductsColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: closedProductsColumns" class="table-row"></tr>
+
+            <!-- No Data Row -->
+            <tr class="mat-row" *matNoDataRow>
+              <td class="mat-cell no-data" colspan="5">
+                <div class="empty-state">
+                  <mat-icon>check_circle_outline</mat-icon>
+                  <p>No expired products found.</p>
+                </div>
+              </td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- Paginator for Closed Products -->
+        <mat-paginator
+          [length]="totalClosedItems()"
+          [pageSize]="closedPageSize()"
+          [pageIndex]="closedPageIndex()"
+          [pageSizeOptions]="[5, 10, 25, 100]"
+          (page)="onClosedPageChange($event)"
+          aria-label="Select page for closed products"
+        >
+        </mat-paginator>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</div>

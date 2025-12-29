@@ -67,7 +67,36 @@
       </div>
       <div class="stat-decorator"></div>
     </div>
+
+    <!-- Renewal KPI (Expiring Soon) -->
+    <div class="stat-card renewal hvr-grow" routerLink="/renewal">
+      <div class="stat-icon-wrapper">
+        <mat-icon>update</mat-icon>
+      </div>
+      <div class="stat-content">
+        <div class="stat-value">{{ totals().renewals }}</div>
+        <div class="stat-label">Expiring Soon (30 Days)</div>
+      </div>
+      <div class="stat-decorator"></div>
+    </div>
+
+    <!-- Expired KPI -->
+    <div class="stat-card expired hvr-grow" routerLink="/renewal">
+      <div class="stat-icon-wrapper">
+        <mat-icon>warning</mat-icon>
+      </div>
+      <div class="stat-content">
+        <div class="stat-value">{{ totals().expired }}</div>
+        <div class="stat-label">Expired Products</div>
+      </div>
+      <div class="stat-decorator"></div>
+    </div>
   </div>
+  <!-- Renewal Products Section -->
+  <!-- <div #renewalSection>
+    <app-renewal-products></app-renewal-products>
+  </div> -->
+
   <!-- clients table -->
   <app-clients-table-component></app-clients-table-component>
 </div>
