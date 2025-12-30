@@ -1,6 +1,6 @@
 export interface ProductSupportDto {
   productId: string;
-  supportEndDate: string; // ISO Date
+  supportEndDate: string;  
 }
 
 export interface AccountSiteDto {

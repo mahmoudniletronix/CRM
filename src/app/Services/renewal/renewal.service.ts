@@ -5,7 +5,7 @@ import { environment } from '../../../environments/environment';
 import { RenewalApiResponse } from '../../Core/domain/models/RenewalResponse.model';
 
 export interface RenewalItem {
-  id: string; // Added ID for tracking
+  id: string;
   accountName: string;
   siteName: string;
   productName: string;
@@ -46,7 +46,7 @@ export class RenewalService {
 
           return {
             id: dto.siteProductId,
-            accountName: dto.accountNameEn, // Or map based on language preference if available
+            accountName: dto.accountNameEn,
             siteName: dto.siteNameEn,
             productName: dto.productNameEn,
             supportEndDate: endDate,
