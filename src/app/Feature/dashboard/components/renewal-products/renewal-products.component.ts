@@ -12,7 +12,10 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { RenewalItem, RenewalService } from '../../../../Services/renewal/renewal.service';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { ToasterService } from '../../../../Services/Toast-message/toaster.service';
+import { RenewalService } from '../../../../Services/renewal/renewal.service';
+import { RenewalItem } from '../../../../Core/domain/models/RenewalItem/RenewalItem.model';
 
 @Component({
   selector: 'app-renewal-products',
@@ -29,6 +32,7 @@ import { RenewalItem, RenewalService } from '../../../../Services/renewal/renewa
     MatTabsModule,
     MatPaginatorModule,
     MatButtonToggleModule,
+    MatSnackBarModule,
     FormsModule,
     RouterLink,
   ],
@@ -37,12 +41,14 @@ import { RenewalItem, RenewalService } from '../../../../Services/renewal/renewa
 })
 export class RenewalProductsComponent implements OnInit {
   private readonly renewalService = inject(RenewalService);
+  private readonly toasterService = inject(ToasterService);
 
   readonly pendingRenewals = this.renewalService.pendingRenewals;
   readonly renewedProducts = this.renewalService.renewedProducts;
   readonly closedProducts = this.renewalService.closedProducts;
   readonly totalItems = this.renewalService.totalItems;
   readonly totalClosedItems = this.renewalService.totalClosedItems;
+  readonly totalRenewedItems = this.renewalService.totalRenewedItems;
 
   readonly filterDays = signal<number>(30);
   readonly pageSize = signal<number>(10);
@@ -51,6 +57,10 @@ export class RenewalProductsComponent implements OnInit {
   // Separate pagination for closed products tab
   readonly closedPageSize = signal<number>(10);
   readonly closedPageIndex = signal<number>(0);
+
+  // Separate pagination for monthly renewals tab
+  readonly renewedPageSize = signal<number>(10);
+  readonly renewedPageIndex = signal<number>(0);
 
   // Client-side filtering of the CURRENT PAGE data
   readonly filteredPendingRenewals = computed(() => {
@@ -72,7 +82,6 @@ export class RenewalProductsComponent implements OnInit {
     'supportEndDate',
   ];
 
-  // Closed products don't have editable dates, so we use different columns
   readonly closedProductsColumns: string[] = [
     'accountName',
     'siteName',
@@ -86,15 +95,19 @@ export class RenewalProductsComponent implements OnInit {
   ngOnInit() {
     this.loadData();
     this.loadClosedData();
+    this.loadRenewedData();
   }
 
   loadData() {
-    // API uses 1-based indexing usually, Angular Paginator uses 0-based
     this.renewalService.loadRenewalProducts(this.pageIndex() + 1, this.pageSize());
   }
 
   loadClosedData() {
     this.renewalService.loadClosedProducts(this.closedPageIndex() + 1, this.closedPageSize());
+  }
+
+  loadRenewedData() {
+    this.renewalService.loadMonthlyRenewals(this.renewedPageIndex() + 1, this.renewedPageSize());
   }
 
   onPageChange(event: PageEvent) {
@@ -109,10 +122,14 @@ export class RenewalProductsComponent implements OnInit {
     this.loadClosedData();
   }
 
+  onRenewedPageChange(event: PageEvent) {
+    this.renewedPageIndex.set(event.pageIndex);
+    this.renewedPageSize.set(event.pageSize);
+    this.loadRenewedData();
+  }
+
   onFilterChange(days: number) {
     this.filterDays.set(days);
-    // If we wanted to reload from API with new filter, we would do it here.
-    // Currently implementing client-side filter on top of the generic "Within30Days" API call.
   }
 
   getDaysStatusClass(days: number): string {
@@ -123,7 +140,15 @@ export class RenewalProductsComponent implements OnInit {
 
   onDateChange(item: RenewalItem, event: any) {
     if (event.value) {
-      this.renewalService.updateProductDate(item, event.value);
+      this.renewalService.renewProduct(item, event.value).subscribe({
+        next: () => {
+          this.toasterService.success('Product renewed successfully');
+        },
+        error: (err) => {
+          console.error('Failed to renew product', err);
+          this.toasterService.handleApiError(err);
+        },
+      });
     }
   }
 }

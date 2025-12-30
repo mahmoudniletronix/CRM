@@ -1,0 +1,11 @@
+<div class="toast-container" [ngClass]="data.type">
+  <div class="toast-icon">
+    <mat-icon>{{ data.type === 'success' ? 'check_circle' : 'error_outline' }}</mat-icon>
+  </div>
+  <div class="toast-content">
+    <span class="toast-message">{{ data.message }}</span>
+  </div>
+  <button class="close-btn" (click)="close()">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>

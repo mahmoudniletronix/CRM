@@ -202,9 +202,20 @@
             <ng-container matColumnDef="supportEndDate">
               <th mat-header-cell *matHeaderCellDef>New Expiry Date</th>
               <td mat-cell *matCellDef="let element" class="date-cell">
-                <span class="renewed-date">
-                  {{ element.supportEndDate | date : 'mediumDate' }}
-                </span>
+                <div class="clickable-cell" (click)="pickerRenewed.open()">
+                  <input
+                    matInput
+                    [matDatepicker]="pickerRenewed"
+                    [(ngModel)]="element.supportEndDate"
+                    (dateChange)="onDateChange(element, $event)"
+                    class="hidden-input"
+                  />
+                  <span class="renewed-date">
+                    {{ element.supportEndDate | date : 'mediumDate' }}
+                    <mat-icon class="edit-icon">edit_calendar</mat-icon>
+                  </span>
+                  <mat-datepicker #pickerRenewed></mat-datepicker>
+                </div>
               </td>
             </ng-container>
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
@@ -221,6 +232,17 @@
             </tr>
           </table>
         </div>
+
+        <!-- Paginator for Renewed Products -->
+        <mat-paginator
+          [length]="totalRenewedItems()"
+          [pageSize]="renewedPageSize()"
+          [pageIndex]="renewedPageIndex()"
+          [pageSizeOptions]="[5, 10, 25, 100]"
+          (page)="onRenewedPageChange($event)"
+          aria-label="Select page for renewed products"
+        >
+        </mat-paginator>
       </div>
     </mat-tab>
 
@@ -278,9 +300,20 @@
             <ng-container matColumnDef="supportEndDate">
               <th mat-header-cell *matHeaderCellDef>Expiry Date</th>
               <td mat-cell *matCellDef="let element" class="date-cell">
-                <span class="expired-date">
-                  {{ element.supportEndDate | date : 'mediumDate' }}
-                </span>
+                <div class="clickable-cell" (click)="pickerClosed.open()">
+                  <input
+                    matInput
+                    [matDatepicker]="pickerClosed"
+                    [(ngModel)]="element.supportEndDate"
+                    (dateChange)="onDateChange(element, $event)"
+                    class="hidden-input"
+                  />
+                  <span class="expired-date">
+                    {{ element.supportEndDate | date : 'mediumDate' }}
+                    <mat-icon class="edit-icon">edit_calendar</mat-icon>
+                  </span>
+                  <mat-datepicker #pickerClosed></mat-datepicker>
+                </div>
               </td>
             </ng-container>
 

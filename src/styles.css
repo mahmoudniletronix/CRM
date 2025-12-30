@@ -1,1 +1,38 @@
-/* You can add global styles to this file, and also import other style files */
+/* Global Styles */
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+
+:root {
+  --success-color: #4caf50;
+  --error-color: #f44336;
+  --bg-color: #ffffff;
+  --text-color: #333333;
+}
+
+/* Custom Snackbar Styles */
+.snackbar-success .mat-mdc-snack-bar-container .mdc-snackbar__surface {
+  background-color: var(--success-color) !important;
+  color: white !important;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.snackbar-success .mat-mdc-button.mat-mdc-snack-bar-action {
+  color: white !important;
+}
+
+.snackbar-error .mat-mdc-snack-bar-container .mdc-snackbar__surface {
+  background-color: var(--error-color) !important;
+  color: white !important;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.snackbar-error .mat-mdc-button.mat-mdc-snack-bar-action {
+  color: white !important;
+}
+
+.transparent-snackbar .mat-mdc-snack-bar-container .mdc-snackbar__surface {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
