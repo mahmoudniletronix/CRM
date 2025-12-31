@@ -10,11 +10,13 @@ import {
 } from '../../Core/domain/models/ticket.model/ticket.model';
 
 import { SitesService } from '../../Services/sites/sites.service';
+import { SupportService } from '../../Services/support/support.service';
 
 @Injectable({ providedIn: 'root' })
 export class TicketsService {
   private readonly http = inject(HttpClient);
   private readonly sitesService = inject(SitesService);
+  private readonly supportService = inject(SupportService);
   private readonly baseUrl = `${environment.apiUrl}/api/Ticket`;
 
   // Signal-based state
@@ -59,6 +61,14 @@ export class TicketsService {
     };
     return this.http.post<void>(`${this.baseUrl}/UpdateStatus`, payload).pipe(
       tap(() => {
+        const ticket = this.getTicketById(id);
+        this.supportService.logAction(
+          id,
+          ticket?.subject || 'Unknown',
+          'status_change',
+          `Status updated to ${status}`
+        );
+
         this.ticketsSignal.update((tickets) =>
           tickets.map((t) => (t.id === id ? { ...t, status, priority: severity } : t))
         );
@@ -219,11 +229,23 @@ export class TicketsService {
     };
 
     this.ticketsSignal.update((tickets) =>
-      tickets.map((t) =>
-        t.id === ticketId
-          ? { ...t, messages: [...(t.messages || []), message], updatedAt: new Date() }
-          : t
-      )
+      tickets.map((t) => {
+        if (t.id === ticketId) {
+          const updatedTicket = {
+            ...t,
+            messages: [...(t.messages || []), message],
+            updatedAt: new Date(),
+          };
+          this.supportService.logAction(
+            ticketId,
+            t.subject,
+            'reply',
+            content.substring(0, 50) + (content.length > 50 ? '...' : '')
+          );
+          return updatedTicket;
+        }
+        return t;
+      })
     );
     this.saveToLocalStorage();
     return of(undefined);

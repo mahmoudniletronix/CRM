@@ -1,0 +1,221 @@
+<div class="support-container">
+  <div class="header-section">
+    <div class="title-group">
+      <h1>Support Team Management</h1>
+      <p>Manage support accounts and track their performance</p>
+    </div>
+    <button mat-flat-button color="primary" (click)="toggleAddForm()" *ngIf="!showAddForm()">
+      <mat-icon>add</mat-icon>
+      Add Support Member
+    </button>
+  </div>
+
+  <!-- Top Stats Row -->
+  <div class="stats-row">
+    <mat-card class="mini-stat-card">
+      <div class="mini-stat-icon blue"><mat-icon>analytics</mat-icon></div>
+
+      <div class="mini-stat-info">
+        <span class="mini-label">Total Actions</span>
+        <span class="mini-value">{{ teamStats().totalActions }}</span>
+      </div>
+    </mat-card>
+    <mat-card class="mini-stat-card">
+      <div class="mini-stat-icon green"><mat-icon>check_circle</mat-icon></div>
+      <div class="mini-stat-info">
+        <span class="mini-label">Tickets Solved</span>
+        <span class="mini-value">{{ teamStats().solvedTickets }}</span>
+      </div>
+    </mat-card>
+    <mat-card class="mini-stat-card">
+      <div class="mini-stat-icon orange"><mat-icon>trending_up</mat-icon></div>
+      <div class="mini-stat-info">
+        <span class="mini-label">Efficiency</span>
+        <span class="mini-value"
+          >{{
+            teamStats().totalActions > 0
+              ? ((teamStats().solvedTickets / teamStats().totalActions) * 100).toFixed(0)
+              : 0
+          }}%</span
+        >
+      </div>
+    </mat-card>
+    <mat-card class="mini-stat-card">
+      <div class="mini-stat-icon purple"><mat-icon>online_prediction</mat-icon></div>
+      <div class="mini-stat-info">
+        <span class="mini-label">Live Agents</span>
+        <span class="mini-value">{{ teamStats().activeAgents }} / {{ members().length }}</span>
+      </div>
+    </mat-card>
+  </div>
+
+  <div class="dashboard-grid">
+    <!-- Visual Analytics Section -->
+    <div class="grid-col-2">
+      <mat-card class="viz-card">
+        <mat-card-header>
+          <mat-card-title>Activity Distribution</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="viz-container">
+            <div class="bar-chart">
+              <div class="bar-item" *ngFor="let item of teamStats().distribution">
+                <div class="bar-label">{{ item.type }}</div>
+                <div class="bar-track">
+                  <div
+                    class="bar-fill"
+                    [style.width.%]="item.percent"
+                    [style.background-color]="item.color"
+                  ></div>
+                </div>
+                <div class="bar-value">{{ item.count }}</div>
+              </div>
+            </div>
+            <div class="action-summary">
+              <div class="summary-item" *ngFor="let item of teamStats().distribution">
+                <div class="dot" [style.background-color]="item.color"></div>
+                <span class="label">{{ item.type }}</span>
+                <span class="val">{{ item.percent | number : '1.0-0' }}%</span>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Leaderboard Section -->
+    <div class="grid-col-1">
+      <mat-card class="leaderboard-card">
+        <mat-card-header>
+          <mat-card-title>Performance Leaderboard</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="leaderboard-list">
+            <div
+              class="leaderboard-item"
+              *ngFor="let agent of teamStats().leaderboard; let i = index"
+            >
+              <div
+                class="rank"
+                [class.gold]="i === 0"
+                [class.silver]="i === 1"
+                [class.bronze]="i === 2"
+              >
+                #{{ i + 1 }}
+              </div>
+              <div class="agent-avatar">{{ agent.avatar }}</div>
+              <div class="agent-info">
+                <div class="agent-name">{{ agent.name }}</div>
+                <div class="agent-count">{{ agent.count }} actions</div>
+              </div>
+              <div class="agent-progress">
+                <div
+                  class="progress-bar"
+                  [style.width.%]="(agent.count / (teamStats().leaderboard[0].count || 1)) * 100"
+                ></div>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+  <div class="main-content" [class.with-details]="selectedMember()">
+    <!-- Members Overview -->
+    <div class="list-section">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Team Overview</mat-card-title>
+        </mat-card-header>
+        <table mat-table [dataSource]="members()" class="w-full">
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>Member</th>
+            <td mat-cell *matCellDef="let m">
+              <div class="member-cell">
+                <div class="avatar">{{ m.fullName.charAt(0) }}</div>
+                <div class="info">
+                  <span class="name">{{ m.fullName }}</span>
+                  <span class="email">{{ m.email }}</span>
+                </div>
+              </div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Status</th>
+            <td mat-cell *matCellDef="let m">
+              <span class="status-badge" [class.active]="m.isActive">
+                {{ m.isActive ? 'Active' : 'Offline' }}
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="lastAction">
+            <th mat-header-cell *matHeaderCellDef>Last Action</th>
+            <td mat-cell *matCellDef="let m">
+              <span class="last-action-text" *ngIf="m.lastAction">
+                {{ m.lastAction.actionType === 'reply' ? 'Replied to' : 'Updated' }}
+                #{{ m.lastAction.ticketId.split('_').pop() }}
+              </span>
+              <span class="text-gray-400" *ngIf="!m.lastAction">No recent activity</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let m">
+              <button mat-icon-button (click)="selectMember(m)" color="primary">
+                <mat-icon>history</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="['name', 'status', 'lastAction', 'actions']"></tr>
+          <tr
+            mat-row
+            *matRowDef="let row; columns: ['name', 'status', 'lastAction', 'actions']"
+          ></tr>
+        </table>
+      </mat-card>
+    </div>
+
+    <!-- Activity Details -->
+    <div class="details-section" *ngIf="selectedMember()">
+      <mat-card class="details-card">
+        <mat-card-header>
+          <mat-card-title>Activity Log: {{ selectedMember()?.fullName }}</mat-card-title>
+          <button mat-icon-button (click)="closeDetails()" class="close-btn">
+            <mat-icon>close</mat-icon>
+          </button>
+        </mat-card-header>
+        <mat-divider></mat-divider>
+        <mat-card-content>
+          <div class="activity-timeline">
+            <div class="activity-item" *ngFor="let act of selectedMember()?.actions">
+              <div class="act-icon" [style.background-color]="getActionColor(act.actionType)">
+                <mat-icon>{{ getActionIcon(act.actionType) }}</mat-icon>
+              </div>
+              <div class="act-content">
+                <div class="act-header">
+                  <span class="act-type">{{ act.actionType | titlecase }}</span>
+                  <span class="act-time">{{ act.timestamp | date : 'short' }}</span>
+                </div>
+                <div class="act-details">
+                  {{ act.details }}
+                </div>
+                <div class="act-ticket">
+                  Ticket: <strong>{{ act.ticketSubject }}</strong>
+                </div>
+              </div>
+            </div>
+            <div class="no-activity" *ngIf="selectedMember()?.actions?.length === 0">
+              <mat-icon>sentiment_dissatisfied</mat-icon>
+              <p>No activity recorded yet for this member.</p>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>

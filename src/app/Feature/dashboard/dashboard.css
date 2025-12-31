@@ -251,6 +251,22 @@
   cursor: pointer;
 }
 
+.stat-card.support-manage .stat-icon-wrapper {
+  background: var(--grad-primary);
+  filter: hue-rotate(45deg); /* Distinctive color */
+}
+.stat-card.support-manage .stat-decorator {
+  background: var(--grad-primary);
+  filter: hue-rotate(45deg);
+}
+.stat-card.support-manage:hover .stat-icon-wrapper {
+  transform: scale(1.1) rotate(-5deg);
+  transition: transform 0.4s ease;
+}
+.stat-card.support-manage {
+  cursor: pointer;
+}
+
 /* ===============================
    Table Section
 ================================ */

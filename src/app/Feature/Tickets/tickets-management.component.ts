@@ -11,6 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { RouterLink } from '@angular/router';
+import { Auth } from '../../Services/auth/auth';
 
 @Component({
   selector: 'app-tickets-management',
@@ -30,6 +31,9 @@ import { RouterLink } from '@angular/router';
 })
 export class TicketsManagementComponent {
   private readonly ticketsService = inject(TicketsService);
+  private readonly authService = inject(Auth);
+
+  readonly user = this.authService.currentUser;
 
   readonly tickets = this.ticketsService.tickets;
   readonly selectedTicketId = signal<string | null>(null);
@@ -123,5 +127,9 @@ export class TicketsManagementComponent {
     this.ticketsService.resolveTicket(id).subscribe({
       error: (err) => console.error('Failed to resolve ticket', err),
     });
+  }
+
+  logout(): void {
+    this.authService.logout();
   }
 }

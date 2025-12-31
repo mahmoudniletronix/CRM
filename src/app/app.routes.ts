@@ -6,10 +6,19 @@ export const routes: Routes = [
   {
     path: 'tickets',
     canActivate: [RoleGuard],
-    data: { roles: ['SuperAdmin'] },
+    data: { roles: ['SuperAdmin', 'SupportTeam'] },
     loadComponent: () =>
       import('./Feature/Tickets/tickets-management.component').then(
         (m) => m.TicketsManagementComponent
+      ),
+  },
+  {
+    path: 'support',
+    canActivate: [RoleGuard],
+    data: { roles: ['SuperAdmin'] },
+    loadComponent: () =>
+      import('./Feature/dashboard/components/support-management/support-management.component').then(
+        (m) => m.SupportManagementComponent
       ),
   },
   {

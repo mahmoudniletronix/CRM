@@ -7,9 +7,22 @@
     class="tickets__back"
     routerLink="/dashboard"
     type="button"
+    *ngIf="user()?.role === 'SuperAdmin'"
   >
     <mat-icon aria-hidden="true">arrow_back</mat-icon>
     <span>Back to Dashboard</span>
+  </button>
+
+  <button
+    mat-stroked-button
+    color="warn"
+    class="tickets__logout"
+    (click)="logout()"
+    type="button"
+    *ngIf="user()?.role === 'SupportTeam'"
+  >
+    <mat-icon aria-hidden="true">logout</mat-icon>
+    <span>Logout</span>
   </button>
 </header>
 

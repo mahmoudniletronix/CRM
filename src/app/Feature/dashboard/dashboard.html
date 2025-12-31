@@ -80,7 +80,6 @@
       <div class="stat-decorator"></div>
     </div>
 
-    <!-- Expired KPI -->
     <div class="stat-card expired hvr-grow" routerLink="/renewal">
       <div class="stat-icon-wrapper">
         <mat-icon>warning</mat-icon>
@@ -88,6 +87,22 @@
       <div class="stat-content">
         <div class="stat-value">{{ totals().expired }}</div>
         <div class="stat-label">Expired Products</div>
+      </div>
+      <div class="stat-decorator"></div>
+    </div>
+
+    <!-- Support Team Management (Super Admin only) -->
+    <div
+      class="stat-card support-manage hvr-grow"
+      routerLink="/support"
+      *ngIf="user()?.role === 'SuperAdmin'"
+    >
+      <div class="stat-icon-wrapper">
+        <mat-icon>manage_accounts</mat-icon>
+      </div>
+      <div class="stat-content">
+        <div class="stat-value">Support</div>
+        <div class="stat-label">Team & Activities</div>
       </div>
       <div class="stat-decorator"></div>
     </div>

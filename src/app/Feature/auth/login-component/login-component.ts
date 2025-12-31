@@ -51,8 +51,8 @@ export class LoginComponent {
         this.isLoading.set(false);
         const user = this.authService.currentUser();
 
-        if (user?.role === 'AccountAdmin') {
-          this.router.navigate(['/clients/tickets']);
+        if (user?.role === 'AccountAdmin' || user?.role === 'SupportTeam') {
+          this.router.navigate(['/tickets']);
         } else {
           this.router.navigate(['/dashboard']);
         }
