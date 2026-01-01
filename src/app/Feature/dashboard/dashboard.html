@@ -1,23 +1,26 @@
 <div class="dashboard-container">
   <!-- Page Header -->
-  <div class="page-header">
+  <div class="page-header glass-header d-flex justify-content-between">
     <div class="header-content">
-      <h1 class="page-title">Dashboard</h1>
-      <p class="page-subtitle">Welcome back, {{ user()?.fullName }}</p>
+      <div class="brand-badge">NTX Platform</div>
+      <h1 class="page-title">Enterprise Dashboard</h1>
+      <p class="page-subtitle">
+        Welcome back, <span class="user-highlight">{{ user()?.fullName }}</span>
+      </p>
     </div>
     <div class="header-actions">
-      <button mat-flat-button color="primary" [routerLink]="['/tickets']">
+      <button mat-flat-button class="btn-primary-gradient" [routerLink]="['/tickets']">
         <mat-icon>confirmation_number</mat-icon>
-        Tickets
+        Support Tickets
       </button>
-      <button mat-flat-button color="primary" [routerLink]="['/clients']">
-        <mat-icon>people</mat-icon>
-        Client Management
+      <button mat-flat-button class="btn-secondary" [routerLink]="['/clients']">
+        <mat-icon>group_add</mat-icon>
+        Clients
       </button>
-
-      <button mat-flat-button color="warn" (click)="logout()">
+      <div class="header-divider"></div>
+      <button mat-button class="btn-logout" (click)="logout()">
         <mat-icon>logout</mat-icon>
-        Logout
+        Sign Out
       </button>
     </div>
   </div>

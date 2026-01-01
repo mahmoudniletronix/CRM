@@ -14,6 +14,7 @@ export interface SupportTeamMember {
   fullName: string;
   email: string;
   isActive: boolean;
+  phoneNumber?: string;
   lastAction?: SupportAction;
   actions: SupportAction[];
 }

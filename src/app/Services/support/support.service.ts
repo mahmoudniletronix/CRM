@@ -21,21 +21,38 @@ export class SupportService {
   }
 
   /**
+   * Get all support team members from API
+   */
+  getSupporters(): Observable<{ email: string; id: string; fullName: string }[]> {
+    return this.http.get<{ email: string; id: string; fullName: string }[]>(
+      `${environment.apiUrl}/api/Account/GetSupporters`
+    );
+  }
+
+  /**
    * Add a new support team member (Simulated backend call)
    */
-  addSupportMember(member: Partial<SupportTeamMember>): Observable<SupportTeamMember> {
-    const newMember: SupportTeamMember = {
-      id: `agent_${Date.now()}`,
-      fullName: member.fullName || '',
-      email: member.email || '',
-      isActive: true,
-      actions: [],
+  addSupportMember(member: any): Observable<any> {
+    const payload = {
+      email: member.email,
+      password: member.password,
+      phoneNumber: member.phoneNumber,
     };
 
-    // In a real app, this would be an HTTP POST
-    this._members.update((m) => [...m, newMember]);
-    this.saveToStorage();
-    return of(newMember);
+    return this.http.post(`${environment.apiUrl}/api/Support`, payload).pipe(
+      tap((response: any) => {
+        const newMember: SupportTeamMember = {
+          id: response.id || `agent_${Date.now()}`,
+          fullName: member.fullName || response.fullName || 'New Agent',
+          email: member.email,
+          isActive: true,
+          phoneNumber: member.phoneNumber,
+          actions: [],
+        };
+        this._members.update((m) => [...m, newMember]);
+        this.saveToStorage();
+      })
+    );
   }
 
   /**

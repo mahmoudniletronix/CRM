@@ -1,13 +1,19 @@
 <div class="support-container">
   <div class="header-section">
     <div class="title-group">
-      <h1>Support Team Management</h1>
-      <p>Manage support accounts and track their performance</p>
+      <h1>Support Team Analytics</h1>
+      <p>Performance tracking & member management for Niletronix</p>
     </div>
-    <button mat-flat-button color="primary" (click)="toggleAddForm()" *ngIf="!showAddForm()">
-      <mat-icon>add</mat-icon>
-      Add Support Member
-    </button>
+    <div class="button-group">
+      <button mat-flat-button class="add-btn" (click)="toggleAddForm()" *ngIf="!showAddForm()">
+        <mat-icon>person_add</mat-icon>
+        New Agent
+      </button>
+      <button mat-flat-button class="back-btn" routerLink="/dashboard">
+        <mat-icon>dashboard</mat-icon>
+        Dashboard
+      </button>
+    </div>
   </div>
 
   <!-- Top Stats Row -->
@@ -120,6 +126,43 @@
       </mat-card>
     </div>
   </div>
+
+  <!-- Add Member Card -->
+  <mat-card class="add-card" *ngIf="showAddForm()">
+    <mat-card-header>
+      <mat-card-title>Create New Support Account</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form [formGroup]="addForm" (ngSubmit)="submitAdd()" class="add-form">
+        <mat-form-field appearance="outline">
+          <mat-label>Full Name</mat-label>
+          <input matInput formControlName="fullName" placeholder="e.g. John Doe" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Email Address</mat-label>
+          <input matInput formControlName="email" type="email" placeholder="agent@crm.com" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Temporary Password</mat-label>
+          <input matInput formControlName="password" type="password" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Phone Number</mat-label>
+          <input matInput formControlName="phoneNumber" placeholder="e.g. 01012345678" />
+        </mat-form-field>
+
+        <div class="form-actions">
+          <button mat-button type="button" (click)="toggleAddForm()">Cancel</button>
+          <button mat-flat-button color="primary" type="submit" [disabled]="addForm.invalid">
+            Create Account
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
 
   <div class="main-content" [class.with-details]="selectedMember()">
     <!-- Members Overview -->

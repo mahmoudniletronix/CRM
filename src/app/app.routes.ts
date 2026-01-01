@@ -1,12 +1,12 @@
 import { Routes } from '@angular/router';
-import { AuthGuard } from './Core/domain/guards/auth.guard';
-import { RoleGuard } from './Core/domain/guards/role.guard';
+import { authGuard } from './Services/auth/auth.guard';
+import { roleGuard } from './Core/domain/guards/role.guard';
 
 export const routes: Routes = [
   {
     path: 'tickets',
-    canActivate: [RoleGuard],
-    data: { roles: ['SuperAdmin', 'SupportTeam'] },
+    canActivate: [roleGuard],
+    data: { roles: ['SuperAdmin', 'Support', 'SupportTeam'] },
     loadComponent: () =>
       import('./Feature/Tickets/tickets-management.component').then(
         (m) => m.TicketsManagementComponent
@@ -14,7 +14,7 @@ export const routes: Routes = [
   },
   {
     path: 'support',
-    canActivate: [RoleGuard],
+    canActivate: [roleGuard],
     data: { roles: ['SuperAdmin'] },
     loadComponent: () =>
       import('./Feature/dashboard/components/support-management/support-management.component').then(
@@ -23,7 +23,7 @@ export const routes: Routes = [
   },
   {
     path: 'clients',
-    canActivate: [RoleGuard],
+    canActivate: [roleGuard],
     data: { roles: ['SuperAdmin'] },
     loadComponent: () =>
       import('./Feature/Client-Management/client-management.component').then(
@@ -41,14 +41,21 @@ export const routes: Routes = [
       import('./Feature/auth/login-component/login-component').then((m) => m.LoginComponent),
   },
   {
+    path: 'reset-password',
+    loadComponent: () =>
+      import('./Feature/auth/reset-password/reset-password.component').then(
+        (m) => m.ResetPasswordComponent
+      ),
+  },
+  {
     path: 'dashboard',
-    canActivate: [RoleGuard],
+    canActivate: [roleGuard],
     data: { roles: ['SuperAdmin'] },
     loadComponent: () => import('./Feature/dashboard/dashboard').then((m) => m.Dashboard),
   },
   {
     path: 'clients/tickets',
-    canActivate: [RoleGuard],
+    canActivate: [roleGuard],
     data: { roles: ['AccountAdmin', 'SuperAdmin'] },
     loadComponent: () =>
       import('./Feature/Clients/clients-tickets-view.component').then(
@@ -57,12 +64,17 @@ export const routes: Routes = [
   },
   {
     path: 'renewal',
-    canActivate: [RoleGuard],
+    canActivate: [roleGuard],
     data: { roles: ['SuperAdmin'] },
     loadComponent: () =>
       import('./Feature/dashboard/components/renewal-products/renewal-products.component').then(
         (m) => m.RenewalProductsComponent
       ),
+  },
+  {
+    path: 'forbidden',
+    loadComponent: () =>
+      import('./Feature/auth/login-component/login-component').then((m) => m.LoginComponent),
   },
   { path: '**', redirectTo: 'login' },
 ];

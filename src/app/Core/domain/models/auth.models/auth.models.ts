@@ -1,13 +1,14 @@
-export type UserRole = 'SuperAdmin' | 'SupportTeam' | 'AccountAdmin';
+export type UserRole = 'SuperAdmin' | 'Support' | 'SupportTeam' | 'AccountAdmin';
 
 export interface AuthUser {
   id: string;
   fullName: string;
   email: string;
-  role: string;
+  role: UserRole;
   token: string;
   permissions?: string[];
-  siteId?: string;
+  siteId?: string | null;
+  isFirstLogin?: boolean;
 }
 
 export interface LoginRequest {
@@ -16,8 +17,11 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
-  token: string;
-  roleName: string;
-  permissions: string[];
+  tokenInfo: {
+    token: string;
+    roleName: UserRole;
+    permissions: string[];
+  };
+  isFirstLogin: boolean;
   siteId?: string;
 }

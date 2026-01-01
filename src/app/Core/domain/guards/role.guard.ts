@@ -1,33 +1,31 @@
-import { Injectable, inject } from '@angular/core';
-import { CanActivate, Router, ActivatedRouteSnapshot } from '@angular/router';
+import { inject } from '@angular/core';
+import { ActivatedRouteSnapshot, CanActivateFn, Router, UrlTree } from '@angular/router';
 import { Auth } from '../../../Services/auth/auth';
+import { UserRole } from '../models/auth.models/auth.models';
+import { defaultRouteForRole } from './role-routes';
 
-@Injectable({ providedIn: 'root' })
-export class RoleGuard implements CanActivate {
-  private readonly auth = inject(Auth);
-  private readonly router = inject(Router);
+export const roleGuard: CanActivateFn = (route: ActivatedRouteSnapshot): boolean | UrlTree => {
+  const auth = inject(Auth);
+  const router = inject(Router);
 
-  canActivate(route: ActivatedRouteSnapshot): boolean {
-    if (!this.auth.isAuthenticated()) {
-      this.router.navigate(['/login']);
-      return false;
-    }
-
-    const user = this.auth.currentUser();
-    const requiredRoles = route.data['roles'] as Array<string>;
-
-    //    Check if route requires specific roles
-    if (!requiredRoles || requiredRoles.length === 0) {
-      return true;
-    }
-
-    // Check User Role
-    if (user && requiredRoles.includes(user.role)) {
-      return true;
-    }
-
-    // Forbidden - Redirect to login
-    this.router.navigate(['/login']);
-    return false;
+  if (!auth.isAuthenticated()) {
+    return router.createUrlTree(['/login']);
   }
-}
+
+  const user = auth.currentUser();
+  const requiredRoles = (route.data['roles'] as UserRole[] | undefined) ?? [];
+
+  // Allow access if no roles are required
+  if (requiredRoles.length === 0) return true;
+
+  // SuperAdmin has unrestricted access to all routes
+  if (user?.role === 'SuperAdmin') return true;
+
+  // Check if user's role is in the required roles list
+  if (user && requiredRoles.includes(user.role)) return true;
+
+  // Redirect to default route for user's role if access is denied
+  const target = defaultRouteForRole(user?.role ?? null);
+
+  return router.createUrlTree([target]);
+};

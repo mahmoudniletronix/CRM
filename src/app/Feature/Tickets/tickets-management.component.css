@@ -5,33 +5,68 @@
 }
 
 /* ===== Header ===== */
-.tickets__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+.tickets-header-card {
+  background: white;
+  padding: 24px 32px;
+  border-radius: 24px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  margin: 16px;
+  border: 1px solid #edf2f7;
+}
 
-  padding: 16px 16px 12px;
+.brand-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  background: #f1f5f9;
+  color: #3b82f6;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 6px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
 }
 
 .tickets__title {
   margin: 0;
-  font-weight: 900;
-  letter-spacing: 0.2px;
+  font-size: 24px;
+  font-weight: 850;
+  color: #1a202c;
+  letter-spacing: -0.5px;
 }
 
-.tickets__back {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  white-space: nowrap;
+.btn-primary-gradient {
+  background: linear-gradient(135deg, #f63b3b, #4e75df) !important;
+  color: white !important;
+  border-radius: 12px !important;
+  font-weight: 600 !important;
+  height: 44px !important;
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2) !important;
+  transition: all 0.3s ease !important;
+}
+
+.btn-primary-gradient:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(37, 99, 235, 0.3) !important;
+}
+
+.btn-logout {
+  background: #fef2f2 !important;
+  color: #ef4444 !important;
+  border: 1px solid #fee2e2 !important;
+  border-radius: 12px !important;
+  font-weight: 600 !important;
+  height: 44px !important;
+}
+
+.btn-logout:hover {
+  background: #fee2e2 !important;
 }
 
 /* ===== Layout wrapper ===== */
 /* Keep the height calculation so the internal scroll works */
 .tickets__layout {
-  height: calc(100vh - 80px);
-  padding-bottom: 16px;
+  height: calc(100vh - 120px);
+  padding: 0 16px 16px;
 }
 
 /* Each Column's Panel */

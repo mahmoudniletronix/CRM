@@ -21,7 +21,7 @@
     <div class="meta-row">
       <mat-form-field appearance="outline" class="status-select">
         <mat-label>Status</mat-label>
-        <mat-select [value]="ticket()!.status" (selectionChange)="onStatusChange($event)">
+        <mat-select [value]="currentStatus()" (selectionChange)="onStatusChange($event)">
           @for (opt of statusOptions; track opt.value) {
           <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
           }
@@ -36,6 +36,22 @@
           }
         </mat-select>
       </mat-form-field>
+
+      <!-- Assign to Support (Visible only when Status is Assigned for SuperAdmin) -->
+      @if (isSuperAdmin() && currentStatus() === TicketStatus.Assigned) {
+      <div class="assign-wrapper slide-in">
+        <mat-form-field appearance="outline" class="assign-select">
+          <mat-label>Select Supporter</mat-label>
+          <mat-select [value]="selectedSupporter()" (selectionChange)="onAssignChange($event)">
+            @for (supporter of supporters(); track supporter.id) {
+            <mat-option [value]="supporter.id">{{
+              supporter.fullName || supporter.email
+            }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+      }
 
       <span class="info"> From: {{ ticket()!.email }} | Phone: {{ ticket()!.phone }} </span>
     </div>
@@ -96,6 +112,7 @@
     }
   </div>
 
+  @if (!isSuperAdmin()) {
   <div class="reply-box">
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Reply to customer...</mat-label>
@@ -118,5 +135,5 @@
       </button>
     </div>
   </div>
-  }
+  } }
 </div>

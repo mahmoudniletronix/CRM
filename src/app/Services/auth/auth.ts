@@ -33,17 +33,18 @@ export class Auth {
   login(payload: LoginRequest): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${environment.apiUrl}/api/Auth/Login`, payload).pipe(
       tap((response) => {
-        // Decode JWT to get user info
-        const userInfo = this.decodeJWT(response.token);
+        const token = response.tokenInfo.token;
+        const userInfo = this.decodeJWT(token);
 
         const user: AuthUser = {
           id: userInfo.userId || '',
           fullName: userInfo.email || payload.email,
           email: userInfo.email || payload.email,
-          role: response.roleName,
-          token: response.token,
-          permissions: response.permissions,
+          role: response.tokenInfo.roleName,
+          token: token,
+          permissions: response.tokenInfo.permissions,
           siteId: response.siteId || userInfo.siteId || null,
+          isFirstLogin: response.isFirstLogin,
         };
 
         this._user.set(user);

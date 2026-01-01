@@ -1,30 +1,27 @@
-<header class="tickets__header">
-  <h2 class="tickets__title">Tickets Management</h2>
+<div class="tickets-header-card glass-header d-flex justify-content-between align-items-center">
+  <div class="header-left">
+    <div class="brand-badge">Service Desk</div>
+    <h2 class="tickets__title">Niletronix Support Central</h2>
+  </div>
 
-  <button
-    mat-stroked-button
-    color="primary"
-    class="tickets__back"
-    routerLink="/dashboard"
-    type="button"
-    *ngIf="user()?.role === 'SuperAdmin'"
-  >
-    <mat-icon aria-hidden="true">arrow_back</mat-icon>
-    <span>Back to Dashboard</span>
-  </button>
+  <div class="header-right d-flex gap-3">
+    <button
+      mat-flat-button
+      class="btn-primary-gradient"
+      routerLink="/dashboard"
+      type="button"
+      *ngIf="user()?.role === 'SuperAdmin'"
+    >
+      <mat-icon aria-hidden="true">dashboard</mat-icon>
+      <span>Admin Dashboard</span>
+    </button>
 
-  <button
-    mat-stroked-button
-    color="warn"
-    class="tickets__logout"
-    (click)="logout()"
-    type="button"
-    *ngIf="user()?.role === 'SupportTeam'"
-  >
-    <mat-icon aria-hidden="true">logout</mat-icon>
-    <span>Logout</span>
-  </button>
-</header>
+    <button mat-flat-button class="btn-logout" (click)="logout()" type="button">
+      <mat-icon aria-hidden="true">logout</mat-icon>
+      <span>{{ user()?.role === 'SupportTeam' ? 'Exit System' : 'Sign Out' }}</span>
+    </button>
+  </div>
+</div>
 
 <section class="tickets__layout container-fluid" aria-label="Tickets layout">
   <div class="row h-100">

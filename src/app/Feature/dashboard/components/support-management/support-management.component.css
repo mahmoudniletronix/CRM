@@ -9,6 +9,11 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 32px;
+  background: white;
+  padding: 24px;
+  border-radius: 20px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  border: 1px solid #edf2f7;
 }
 
 .title-group h1 {
@@ -20,7 +25,45 @@
 
 .title-group p {
   margin: 4px 0 0;
-  color: #718096;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.add-btn {
+  background: linear-gradient(135deg, #f63b3b, #4e75df) !important;
+  color: white !important;
+  border-radius: 12px !important;
+  padding: 0 24px !important;
+  height: 48px !important;
+  font-weight: 600 !important;
+  box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.25) !important;
+  transition: all 0.3s ease !important;
+}
+
+.add-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 20px -5px rgba(37, 99, 235, 0.35) !important;
+}
+
+.back-btn {
+  background: #f1f5f9 !important;
+  color: #475569 !important;
+  border-radius: 12px !important;
+  padding: 0 20px !important;
+  height: 48px !important;
+  font-weight: 600 !important;
+  transition: all 0.3s ease !important;
+}
+
+.back-btn:hover {
+  background: #e2e8f0 !important;
+  color: #1e293b !important;
+}
+
+.button-group {
+  display: flex;
+  gap: 12px;
+  align-items: center;
 }
 
 .stats-row {

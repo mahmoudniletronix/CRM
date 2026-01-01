@@ -3,10 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Auth } from '../../../Services/auth/auth';
+import { defaultRouteForRole } from '../../../Core/domain/guards/role-routes';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-login-component',
@@ -17,6 +19,7 @@ import { MatInputModule } from '@angular/material/input';
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
+    MatIconModule,
   ],
   templateUrl: './login-component.html',
   styleUrl: './login-component.css',
@@ -28,6 +31,19 @@ export class LoginComponent {
 
   readonly error = signal<string | null>(null);
   readonly isLoading = signal<boolean>(false);
+  readonly hidePassword = signal<boolean>(true);
+
+  constructor() {
+    // If already authenticated, redirect to home page immediately
+    if (this.authService.isAuthenticated()) {
+      this.redirectByRole();
+    }
+  }
+
+  private redirectByRole(): void {
+    const target = defaultRouteForRole(this.authService.currentUser()?.role);
+    this.router.navigate([target]);
+  }
 
   readonly form = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
@@ -51,11 +67,12 @@ export class LoginComponent {
         this.isLoading.set(false);
         const user = this.authService.currentUser();
 
-        if (user?.role === 'AccountAdmin' || user?.role === 'SupportTeam') {
-          this.router.navigate(['/tickets']);
-        } else {
-          this.router.navigate(['/dashboard']);
+        if (user?.isFirstLogin) {
+          this.router.navigate(['/reset-password']);
+          return;
         }
+
+        this.redirectByRole();
       },
       error: (err: any) => {
         this.isLoading.set(false);
@@ -74,5 +91,9 @@ export class LoginComponent {
         this.error.set(errorMessage);
       },
     });
+  }
+
+  togglePasswordVisibility(): void {
+    this.hidePassword.update((v) => !v);
   }
 }

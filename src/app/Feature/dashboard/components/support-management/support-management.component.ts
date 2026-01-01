@@ -14,6 +14,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatChipsModule } from '@angular/material/chips';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-support-management',
@@ -29,6 +30,7 @@ import { MatChipsModule } from '@angular/material/chips';
     MatTableModule,
     MatDividerModule,
     MatChipsModule,
+    RouterLink,
   ],
   templateUrl: './support-management.component.html',
   styleUrl: './support-management.component.css',
@@ -94,6 +96,7 @@ export class SupportManagementComponent {
     fullName: ['', [Validators.required]],
     email: ['', [Validators.required, Validators.email]],
     password: ['123456', [Validators.required, Validators.minLength(6)]],
+    phoneNumber: ['', [Validators.required]],
   });
 
   toggleAddForm() {

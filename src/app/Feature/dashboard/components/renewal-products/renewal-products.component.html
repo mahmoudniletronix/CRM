@@ -1,26 +1,28 @@
 <div class="renewal-container">
-  <!-- Header -->
-  <div class="renewal-header d-flex justify-content-between align-items-center">
-    <div class="header-content">
-      <div class="header-icon-wrapper">
+  <div class="renewal-header glass-header d-flex justify-content-between align-items-center">
+    <div class="header-left d-flex align-items-center gap-4">
+      <div class="header-icon-wrapper ntx-gradient-shadow">
         <mat-icon>inventory_2</mat-icon>
       </div>
       <div class="header-titles">
-        <h2>Product Renewal Status</h2>
-        <p>Monitor and manage client product subscriptions</p>
+        <div class="brand-badge">Subscription Manager</div>
+        <h2>Product Renewal Analytics</h2>
+        <p>Monitor and manage client product subscriptions for Niletronix</p>
       </div>
     </div>
-    <div class="header-stats">
-      <div class="stat-badge">
-        <span class="count">{{ pendingRenewals().length }}</span>
-        <span class="label">Pending</span>
+
+    <div class="header-right d-flex align-items-center gap-4">
+      <div class="header-stats">
+        <div class="stat-badge platinum-glass">
+          <span class="count">{{ pendingRenewals().length }}</span>
+          <span class="label">Pending</span>
+        </div>
       </div>
+      <button mat-flat-button class="btn-secondary back-button" routerLink="/dashboard">
+        <mat-icon>dashboard</mat-icon>
+        Dashboard
+      </button>
     </div>
-    <!-- back to dashboard button -->
-    <button mat-stroked-button color="primary" class="back-button" routerLink="/dashboard">
-      <mat-icon>arrow_back</mat-icon>
-      Back to Dashboard
-    </button>
   </div>
 
   <!-- Tabs Section -->

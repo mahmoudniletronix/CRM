@@ -1,19 +1,16 @@
 <div class="page-container">
-  <header class="header">
+  <header class="header glass-header">
     <div class="header-content">
-      <h1>Client Management</h1>
-      <p>Manage company products, client accounts, and subscriptions.</p>
+      <div class="brand-badge">NTX Platform</div>
+      <h1 class="page-title">Client Management</h1>
+      <p class="page-subtitle">Manage company products, client accounts, and subscriptions.</p>
     </div>
 
     <!-- Back to Dashboard -->
     <div class="header-actions">
-      <button
-        mat-stroked-button
-        class="back-button btn btn-outline-primary justify-content-center align-items-center d-flex w-100 rounded-5"
-        routerLink="/dashboard"
-      >
-        <mat-icon>arrow_back</mat-icon>
-        Back to Dashboard
+      <button mat-flat-button class="back-btn" routerLink="/dashboard">
+        <mat-icon>dashboard</mat-icon>
+        Dashboard
       </button>
     </div>
   </header>

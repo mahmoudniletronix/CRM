@@ -1,21 +1,27 @@
 <div class="tickets-container">
   <!-- Page Header -->
-  <div class="page-header">
+  <div class="page-header glass-header">
     <div class="header-content">
-      <h1 class="page-title">Support Tickets</h1>
-      <p class="page-subtitle">Create and manage your support requests</p>
+      <div class="brand-badge">Support Portal</div>
+      <h1 class="page-title">Your Support Center</h1>
+      <p class="page-subtitle">
+        We're here to help you succeed. Submit tickets and track your requests.
+      </p>
     </div>
 
-    <div class="header-stats">
-      <!-- lougout button -->
-      <button mat-button (click)="logout()">
-        <mat-icon>logout</mat-icon>
-        Logout
-      </button>
+    <div class="header-actions">
       <div class="stat-badge">
-        <span class="stat-label">Total Tickets</span>
-        <span class="stat-value">{{ totalTickets() }}</span>
+        <mat-icon>confirmation_number</mat-icon>
+        <div class="stat-content">
+          <span class="stat-value">{{ totalTickets() }}</span>
+          <span class="stat-label">Total Tickets</span>
+        </div>
       </div>
+      <div class="header-divider"></div>
+      <button mat-button class="btn-logout" (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        Sign Out
+      </button>
     </div>
   </div>
 

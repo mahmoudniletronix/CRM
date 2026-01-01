@@ -47,6 +47,36 @@ export class TicketsService {
   /**
    * Create a new ticket
    */
+  /**
+   * Assign a ticket to a support member
+   */
+  assignTicket(
+    id: string,
+    supportId: string,
+    severity: TicketPriority,
+    description: string = 'Assigned by Admin'
+  ): Observable<void> {
+    const payload = {
+      Id: id,
+      SupportId: supportId,
+      Severity: severity,
+      Description: description,
+    };
+    // Endpoint for ChangeTicketStatusCommand
+    return this.http.post<void>(`${this.baseUrl}/UpdateStatus`, payload).pipe(
+      tap(() => {
+        this.ticketsSignal.update((tickets) =>
+          tickets.map((t) =>
+            t.id === id ? { ...t, status: TicketStatus.Assigned, priority: severity } : t
+          )
+        );
+      })
+    );
+  }
+
+  /**
+   * Update ticket status
+   */
   updateTicketStatus(
     id: string,
     status: TicketStatus,
