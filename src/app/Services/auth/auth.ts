@@ -23,7 +23,27 @@ export class Auth {
     return this._user()?.role;
   }
 
-  readonly isAuthenticated = computed(() => !!this._user());
+  readonly isAuthenticated = computed(() => {
+    const user = this._user();
+    if (!user || !user.token) return false;
+    return !this.isTokenExpired(user.token);
+  });
+
+  private isTokenExpired(token: string): boolean {
+    const date = this.getTokenExpirationDate(token);
+    if (!date) return false;
+    return !(date.valueOf() > new Date().valueOf());
+  }
+
+  private getTokenExpirationDate(token: string): Date | null {
+    const decoded = this.decodeJWT(token);
+    if (!decoded || !decoded.exp) return null;
+
+    const date = new Date(0);
+    date.setUTCSeconds(decoded.exp);
+    return date;
+  }
+
   readonly token = computed(() => this._user()?.token ?? null);
   readonly siteId = computed(() => this._user()?.siteId ?? null);
 
@@ -53,7 +73,7 @@ export class Auth {
       catchError((error) => {
         console.error('Login failed:', error);
         return throwError(() => error);
-      })
+      }),
     );
   }
 
@@ -84,7 +104,7 @@ export class Auth {
         atob(base64)
           .split('')
           .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-          .join('')
+          .join(''),
       );
       return JSON.parse(jsonPayload);
     } catch (error) {

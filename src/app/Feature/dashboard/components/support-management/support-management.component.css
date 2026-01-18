@@ -390,7 +390,7 @@
 }
 
 .details-card {
-  height: calc(100vh - 200px);
+  /* height: calc(100vh - 200px); */
   position: sticky;
   top: 24px;
   display: flex;

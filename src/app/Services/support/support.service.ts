@@ -1,8 +1,15 @@
-import { Injectable, inject, signal, computed } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, of, tap } from 'rxjs';
+import { Injectable, inject, signal } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { SupportTeamMember, SupportAction } from '../../Core/domain/models/support-team.model';
+import {
+  PaginatedSupportersResponse,
+  SupportActivitiesResponse,
+  CloseTicketRequest,
+  RejectTicketRequest,
+  GetSupportersParams,
+} from '../../Core/domain/models/support/support.models';
 import { Auth } from '../auth/auth';
 
 @Injectable({ providedIn: 'root' })
@@ -21,16 +28,61 @@ export class SupportService {
   }
 
   /**
-   * Get all support team members from API
+   * Get all support team members with pagination
    */
-  getSupporters(): Observable<{ email: string; id: string; fullName: string }[]> {
-    return this.http.get<{ email: string; id: string; fullName: string }[]>(
-      `${environment.apiUrl}/api/Account/GetSupporters`
+  getAll(params?: GetSupportersParams): Observable<PaginatedSupportersResponse> {
+    let httpParams = new HttpParams();
+
+    if (params?.searchText) {
+      httpParams = httpParams.set('SearchText', params.searchText);
+    }
+    if (params?.pageNumber) {
+      httpParams = httpParams.set('PageNumber', params.pageNumber.toString());
+    }
+    if (params?.pageSize) {
+      httpParams = httpParams.set('PageSize', params.pageSize.toString());
+    }
+
+    return this.http.get<PaginatedSupportersResponse>(`${environment.apiUrl}/api/Support/GetAll`, {
+      params: httpParams,
+    });
+  }
+
+  /**
+   * Get activities for a specific supporter
+   */
+  getActivities(supporterId: string): Observable<SupportActivitiesResponse> {
+    return this.http.get<SupportActivitiesResponse>(
+      `${environment.apiUrl}/api/Support/Activities`,
+      { params: { id: supporterId } },
     );
   }
 
   /**
-   * Add a new support team member (Simulated backend call)
+   * Close a ticket
+   */
+  closeTicket(request: CloseTicketRequest): Observable<any> {
+    return this.http.post(`${environment.apiUrl}/api/Support/CloseTicket`, request);
+  }
+
+  /**
+   * Reject a ticket
+   */
+  rejectTicket(request: RejectTicketRequest): Observable<any> {
+    return this.http.post(`${environment.apiUrl}/api/Support/RejectTicket`, request);
+  }
+
+  /**
+   * Get all support team members from API (legacy method for backward compatibility)
+   */
+  getSupporters(): Observable<{ email: string; id: string; fullName: string }[]> {
+    return this.http.get<{ email: string; id: string; fullName: string }[]>(
+      `${environment.apiUrl}/api/Account/GetSupporters`,
+    );
+  }
+
+  /**
+   * Add a new support team member
    */
   addSupportMember(member: any): Observable<any> {
     const payload = {
@@ -51,7 +103,7 @@ export class SupportService {
         };
         this._members.update((m) => [...m, newMember]);
         this.saveToStorage();
-      })
+      }),
     );
   }
 
@@ -62,7 +114,7 @@ export class SupportService {
     ticketId: string,
     ticketSubject: string,
     actionType: SupportAction['actionType'],
-    details: string
+    details: string,
   ): void {
     const user = this.auth.currentUser();
     if (!user || (user.role !== 'SupportTeam' && user.role !== 'SuperAdmin')) return;
@@ -83,8 +135,8 @@ export class SupportService {
     // Update member list with last action
     this._members.update((members) =>
       members.map((m) =>
-        m.id === user.id ? { ...m, lastAction: action, actions: [action, ...m.actions] } : m
-      )
+        m.id === user.id ? { ...m, lastAction: action, actions: [action, ...m.actions] } : m,
+      ),
     );
 
     this.saveToStorage();
@@ -108,42 +160,11 @@ export class SupportService {
 
     if (savedMembers) {
       this._members.set(JSON.parse(savedMembers));
-    } else {
-      this._members.set([
-        {
-          id: 'agent_1',
-          fullName: 'Support Agent One',
-          email: 'agent1@company.com',
-          isActive: true,
-          actions: [],
-        },
-        {
-          id: 'agent_2',
-          fullName: 'Support Agent Two',
-          email: 'agent2@company.com',
-          isActive: false,
-          actions: [],
-        },
-        {
-          id: 'agent_3',
-          fullName: 'Ahmad Nile',
-          email: 'ahmad@niletronix.com',
-          isActive: true,
-          actions: [],
-        },
-        {
-          id: 'agent_4',
-          fullName: 'Sara Hassan',
-          email: 'sara@support.com',
-          isActive: true,
-          actions: [],
-        },
-      ]);
     }
 
     if (savedActions) {
       this._actions.set(
-        JSON.parse(savedActions).map((a: any) => ({ ...a, timestamp: new Date(a.timestamp) }))
+        JSON.parse(savedActions).map((a: any) => ({ ...a, timestamp: new Date(a.timestamp) })),
       );
     }
   }

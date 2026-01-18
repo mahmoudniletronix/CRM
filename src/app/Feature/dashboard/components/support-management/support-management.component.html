@@ -18,14 +18,14 @@
 
   <!-- Top Stats Row -->
   <div class="stats-row">
-    <mat-card class="mini-stat-card">
+    <!-- <mat-card class="mini-stat-card">
       <div class="mini-stat-icon blue"><mat-icon>analytics</mat-icon></div>
 
       <div class="mini-stat-info">
         <span class="mini-label">Total Actions</span>
         <span class="mini-value">{{ teamStats().totalActions }}</span>
       </div>
-    </mat-card>
+    </mat-card> -->
     <mat-card class="mini-stat-card">
       <div class="mini-stat-icon green"><mat-icon>check_circle</mat-icon></div>
       <div class="mini-stat-info">
@@ -33,7 +33,7 @@
         <span class="mini-value">{{ teamStats().solvedTickets }}</span>
       </div>
     </mat-card>
-    <mat-card class="mini-stat-card">
+    <!-- <mat-card class="mini-stat-card">
       <div class="mini-stat-icon orange"><mat-icon>trending_up</mat-icon></div>
       <div class="mini-stat-info">
         <span class="mini-label">Efficiency</span>
@@ -45,7 +45,7 @@
           }}%</span
         >
       </div>
-    </mat-card>
+    </mat-card> -->
     <mat-card class="mini-stat-card">
       <div class="mini-stat-icon purple"><mat-icon>online_prediction</mat-icon></div>
       <div class="mini-stat-info">
@@ -57,7 +57,7 @@
 
   <div class="dashboard-grid">
     <!-- Visual Analytics Section -->
-    <div class="grid-col-2">
+    <!-- <div class="grid-col-2">
       <mat-card class="viz-card">
         <mat-card-header>
           <mat-card-title>Activity Distribution</mat-card-title>
@@ -86,8 +86,8 @@
             </div>
           </div>
         </mat-card-content>
-      </mat-card>
-    </div>
+      </mat-card> -->
+    <!-- </div> -->
 
     <!-- Leaderboard Section -->
     <div class="grid-col-1">
@@ -171,55 +171,68 @@
         <mat-card-header>
           <mat-card-title>Team Overview</mat-card-title>
         </mat-card-header>
-        <table mat-table [dataSource]="members()" class="w-full">
-          <ng-container matColumnDef="name">
+
+        <!-- Loading Spinner -->
+        <div *ngIf="isLoading()" style="display: flex; justify-content: center; padding: 2rem">
+          <mat-spinner diameter="40"></mat-spinner>
+        </div>
+
+        <!-- Table -->
+        <table mat-table [dataSource]="supporters()" class="w-full" *ngIf="!isLoading()">
+          <ng-container matColumnDef="email">
             <th mat-header-cell *matHeaderCellDef>Member</th>
-            <td mat-cell *matCellDef="let m">
+            <td mat-cell *matCellDef="let s">
               <div class="member-cell">
-                <div class="avatar">{{ m.fullName.charAt(0) }}</div>
+                <div class="avatar">{{ s.email.charAt(0).toUpperCase() }}</div>
                 <div class="info">
-                  <span class="name">{{ m.fullName }}</span>
-                  <span class="email">{{ m.email }}</span>
+                  <span class="name">{{ s.email }}</span>
+                  <span class="email">{{ s.phone || 'No phone' }}</span>
                 </div>
               </div>
             </td>
           </ng-container>
 
-          <ng-container matColumnDef="status">
-            <th mat-header-cell *matHeaderCellDef>Status</th>
-            <td mat-cell *matCellDef="let m">
-              <span class="status-badge" [class.active]="m.isActive">
-                {{ m.isActive ? 'Active' : 'Offline' }}
-              </span>
+          <ng-container matColumnDef="assignedTickets">
+            <th mat-header-cell *matHeaderCellDef>Assigned Tickets</th>
+            <td mat-cell *matCellDef="let s">
+              <span class="status-badge">{{ s.assignedTicketCount }}</span>
             </td>
           </ng-container>
 
-          <ng-container matColumnDef="lastAction">
-            <th mat-header-cell *matHeaderCellDef>Last Action</th>
-            <td mat-cell *matCellDef="let m">
-              <span class="last-action-text" *ngIf="m.lastAction">
-                {{ m.lastAction.actionType === 'reply' ? 'Replied to' : 'Updated' }}
-                #{{ m.lastAction.ticketId.split('_').pop() }}
-              </span>
-              <span class="text-gray-400" *ngIf="!m.lastAction">No recent activity</span>
+          <ng-container matColumnDef="closedTickets">
+            <th mat-header-cell *matHeaderCellDef>Closed Tickets</th>
+            <td mat-cell *matCellDef="let s">
+              <span class="last-action-text">{{ s.closedTicketCount }}</span>
             </td>
           </ng-container>
 
           <ng-container matColumnDef="actions">
             <th mat-header-cell *matHeaderCellDef></th>
-            <td mat-cell *matCellDef="let m">
-              <button mat-icon-button (click)="selectMember(m)" color="primary">
-                <mat-icon>history</mat-icon>
+            <td mat-cell *matCellDef="let s">
+              <button mat-icon-button color="primary">
+                <mat-icon>visibility</mat-icon>
               </button>
             </td>
           </ng-container>
 
-          <tr mat-header-row *matHeaderRowDef="['name', 'status', 'lastAction', 'actions']"></tr>
+          <tr
+            mat-header-row
+            *matHeaderRowDef="['email', 'assignedTickets', 'closedTickets', 'actions']"
+          ></tr>
           <tr
             mat-row
-            *matRowDef="let row; columns: ['name', 'status', 'lastAction', 'actions']"
+            *matRowDef="let row; columns: ['email', 'assignedTickets', 'closedTickets', 'actions']"
           ></tr>
         </table>
+
+        <!-- Empty State -->
+        <div
+          *ngIf="!isLoading() && supporters().length === 0"
+          style="padding: 2rem; text-align: center; color: #999"
+        >
+          <mat-icon style="font-size: 48px; width: 48px; height: 48px">group</mat-icon>
+          <p>No support members found. Create one to get started!</p>
+        </div>
       </mat-card>
     </div>
 
@@ -242,7 +255,7 @@
               <div class="act-content">
                 <div class="act-header">
                   <span class="act-type">{{ act.actionType | titlecase }}</span>
-                  <span class="act-time">{{ act.timestamp | date : 'short' }}</span>
+                  <span class="act-time">{{ act.timestamp | date: 'short' }}</span>
                 </div>
                 <div class="act-details">
                   {{ act.details }}

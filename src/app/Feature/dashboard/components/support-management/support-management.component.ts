@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed } from '@angular/core';
+import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SupportService } from '../../../../Services/support/support.service';
@@ -6,6 +6,7 @@ import {
   SupportTeamMember,
   SupportAction,
 } from '../../../../Core/domain/models/support-team.model';
+import { SupporterItem } from '../../../../Core/domain/models/support/support.models';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -14,6 +15,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { RouterLink } from '@angular/router';
 
 @Component({
@@ -30,17 +32,25 @@ import { RouterLink } from '@angular/router';
     MatTableModule,
     MatDividerModule,
     MatChipsModule,
+    MatProgressSpinnerModule,
     RouterLink,
   ],
   templateUrl: './support-management.component.html',
   styleUrl: './support-management.component.css',
 })
-export class SupportManagementComponent {
+export class SupportManagementComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly supportService = inject(SupportService);
 
   readonly members = this.supportService.members;
   readonly allActions = this.supportService.actions;
+
+  // New: Supporters from API
+  readonly supporters = signal<SupporterItem[]>([]);
+  readonly isLoading = signal(false);
+  readonly currentPage = signal(1);
+  readonly pageSize = signal(10);
+  readonly totalItems = signal(0);
 
   readonly teamStats = computed(() => {
     const actions = this.allActions();
@@ -99,6 +109,30 @@ export class SupportManagementComponent {
     phoneNumber: ['', [Validators.required]],
   });
 
+  ngOnInit() {
+    this.loadSupporters();
+  }
+
+  loadSupporters() {
+    this.isLoading.set(true);
+    this.supportService
+      .getAll({
+        pageNumber: this.currentPage(),
+        pageSize: this.pageSize(),
+      })
+      .subscribe({
+        next: (response) => {
+          this.supporters.set(response.data);
+          this.totalItems.set(response.totalItems);
+          this.isLoading.set(false);
+        },
+        error: (err) => {
+          console.error('Failed to load supporters:', err);
+          this.isLoading.set(false);
+        },
+      });
+  }
+
   toggleAddForm() {
     this.showAddForm.update((v) => !v);
     if (!this.showAddForm()) this.addForm.reset({ password: '123456' });
@@ -110,6 +144,10 @@ export class SupportManagementComponent {
     this.supportService.addSupportMember(this.addForm.value).subscribe({
       next: () => {
         this.toggleAddForm();
+        this.loadSupporters(); // Reload the table after adding
+      },
+      error: (err) => {
+        console.error('Failed to add support member:', err);
       },
     });
   }
